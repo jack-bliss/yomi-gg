@@ -10,14 +10,12 @@ export class ProfileEndpoint {
   ): Promise<any> {
 
     const query = 'SELECT id,username,joined,type FROM profiles';
-
-    return Promise.resolve(query);
-
-    // return new Promise((resolve, reject) => {
-    //   pool.query(query, [1], (err, result) => {
-    //     resolve(result);
-    //   });
-    // });
+    
+    return new Promise((resolve, reject) => {
+      pool.query(query, [1], (err, result) => {
+        resolve(result);
+      });
+    });
 
   }
 
