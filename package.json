@@ -1,0 +1,22 @@
+{
+  "name": "ts-rest-session",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-lint": "^4.5.1",
+    "typescript": "^2.9.2",
+    "webpack": "^4.12.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-sessions": "^1.0.6",
+    "typescript-rest": "^1.6.1"
+  }
+}
