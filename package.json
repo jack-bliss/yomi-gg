@@ -4,19 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node server"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express-session": "^1.15.10",
+    "@types/jest": "^23.1.1",
+    "@types/node": "^10.3.5",
+    "awesome-typescript-loader": "^5.2.0",
+    "jest": "^23.2.0",
+    "source-map-loader": "^0.2.3",
+    "ts-jest": "^22.4.6",
     "ts-lint": "^4.5.1",
     "typescript": "^2.9.2",
     "webpack": "^4.12.1"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "express-sessions": "^1.0.6",
+    "express-session": "^1.15.6",
+    "ts-node": "^7.0.0",
     "typescript-rest": "^1.6.1"
   }
 }
