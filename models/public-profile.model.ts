@@ -1,4 +1,4 @@
-import { ProfileType } from '../enums/profile-type.enum';
+import { ProfileType } from '../types/profile-type.type';
 
 export class PublicProfile {
 
@@ -11,7 +11,7 @@ export class PublicProfile {
     this.id = input.id;
     this.username = input.username;
     this.joined = new Date(typeof input.joined === 'string' ? parseInt(input.joined) : input.joined);
-    this.type = ProfileType[input.type];
+    this.type = input.type;
   }
 
 }

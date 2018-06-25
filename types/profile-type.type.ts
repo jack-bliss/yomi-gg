@@ -1,0 +1,1 @@
+export type ProfileType = 'admin' | 'member' | 'partner';

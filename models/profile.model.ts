@@ -1,4 +1,4 @@
-import { ProfileType } from '../enums/profile-type.enum';
+import { ProfileType } from '../types/profile-type.type';
 
 export class Profile {
 
@@ -18,7 +18,7 @@ export class Profile {
     this.joined = new Date(input.joined);
     this.verified = Boolean(input.verified);
     this.coins = input.coins;
-    this.type = ProfileType[input.type];
+    this.type = input.type;
 
   }
 
