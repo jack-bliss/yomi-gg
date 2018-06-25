@@ -10,10 +10,10 @@ export class ProfileEndpoint {
   ): Promise<any> {
 
     const query = 'SELECT id,username,joined,type FROM profiles';
-    
+
     return new Promise((resolve, reject) => {
-      pool.query(query, [1], (err, result) => {
-        resolve(result);
+      pool.query(query, (err, result) => {
+        resolve(JSON.stringify(result.rows));
       });
     });
 
