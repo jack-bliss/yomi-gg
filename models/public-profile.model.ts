@@ -10,7 +10,7 @@ export class PublicProfile {
   constructor(input: any) {
     this.id = input.id;
     this.username = input.username;
-    this.joined = new Date(input.joined);
+    this.joined = new Date(typeof input.joined === 'string' ? parseInt(input.joined) : input.joined);
     this.type = ProfileType[input.type];
   }
 
