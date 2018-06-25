@@ -1,4 +1,4 @@
-export const DateDeserialiser = (input: string | number | Date): Date {
+export const DateDeserialiser = (input: string | number | Date): Date => {
 
   if (input instanceof Date) {
     return input;
