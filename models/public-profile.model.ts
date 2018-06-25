@@ -1,4 +1,5 @@
 import { ProfileType } from '../types/profile-type.type';
+import { DateDeserialiser } from '../deserialisers/date.deserialiser';
 
 export class PublicProfile {
 
@@ -10,7 +11,7 @@ export class PublicProfile {
   constructor(input: any) {
     this.id = input.id;
     this.username = input.username;
-    this.joined = new Date(typeof input.joined === 'string' ? parseInt(input.joined) : input.joined);
+    this.joined = DateDeserialiser(input.joined);
     this.type = input.type;
   }
 

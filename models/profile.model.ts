@@ -1,4 +1,5 @@
 import { ProfileType } from '../types/profile-type.type';
+import { DateDeserialiser } from '../deserialisers/date.deserialiser';
 
 export class Profile {
 
@@ -15,7 +16,7 @@ export class Profile {
     this.id = input.id;
     this.username = input.username;
     this.email = input.email;
-    this.joined = new Date(input.joined);
+    this.joined = DateDeserialiser(input.joined);
     this.verified = Boolean(input.verified);
     this.coins = input.coins;
     this.type = input.type;
