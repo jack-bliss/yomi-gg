@@ -82,7 +82,7 @@ export class AuthEndpoint {
         throw new Errors.BadRequestError('That password is invalid.');
       }
 
-      pool.query('SELECT * FROM profiles where email=' + email, (err, result) => {
+      pool.query('SELECT * FROM profiles where email=\'' + email +'\'', (err, result) => {
         if (!result.rows.length) {
           throw new Errors.NotFoundError('That email address isn\'t registered.');
         } else {
