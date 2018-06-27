@@ -1,4 +1,4 @@
-import { ContextRequest, GET, Path, POST, QueryParam, Errors } from 'typescript-rest';
+import { ContextRequest, GET, Path, POST, QueryParam, Errors, FormParam } from 'typescript-rest';
 import { AuthData } from '../interfaces/auth-data.interface';
 import { EmailValidator } from '../validators/email.validator';
 import { PasswordValidator } from '../validators/password.validator';
@@ -14,31 +14,38 @@ export class AuthEndpoint {
   @POST
   signUp(
     @ContextRequest { pool, session }: RequestExtended,
+    @FormParam('email') FEmail: string,
+    @FormParam('username') FUsername: string,
+    @FormParam('password') FPassword: string,
     signUp: AuthData,
   ): Promise<Profile & Token> {
 
     console.log(signUp);
 
+    const email = FEmail ? FEmail : (signUp.email ? signUp.email : '');
+    const username = FUsername ? FUsername : (signUp.username ? signUp.username : '');
+    const password = FPassword ? FPassword : (signUp.password ? signUp.password : '');
+
     return new Promise((resolve, reject) => {
 
-      if (!EmailValidator(signUp.email)) {
+      if (!EmailValidator(email)) {
         throw new Errors.BadRequestError('That email is invalid.');
       }
 
-      if (!PasswordValidator(signUp.password)) {
+      if (!PasswordValidator(password)) {
         throw new Errors.BadRequestError('That password is invalid.');
       }
 
-      bcrypt.hash(signUp.password, 10).then((hashedPW: string) => {
+      bcrypt.hash(password, 10).then((hashedPW: string) => {
 
         console.log(hashedPW);
 
         const query = 'INSERT INTO profiles ' +
           '(username, password, email, verified, coins, joined, type) ' +
           'VALUES(' +
-          signUp.username + ', ' +
+          username + ', ' +
           hashedPW + ', ' +
-          signUp.email + ', ' +
+          email + ', ' +
           'TRUE, ' +
           '5, ' +
           (new Date()).toISOString() + ', ' +

@@ -2,6 +2,6 @@ const EmailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")
 
 export const EmailValidator = (email: string) => {
 
-  return email.match(EmailRegex) !== null;
+  return typeof email === 'string' && email.match(EmailRegex) !== null;
 
 };
