@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
 
 app.get('/place-a-bet', (req: Request, res: Response) => {
 
-  if (!req.session.profile_id) {
+  if (!req.session.profile.id) {
     res.redirect('/');
     return;
   }
