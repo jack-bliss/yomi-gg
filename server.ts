@@ -10,6 +10,7 @@ import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 import { join } from 'path';
 import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
 import { readFile } from 'fs';
+import { Request, Response } from 'express';
 
 
 const app: express.Application = express();
@@ -46,10 +47,10 @@ app.get('/', (req, res) => {
   res.sendFile(join(__dirname, './src/pages/index.html'));
 });
 
-app.get('/place-a-bet', (req, res) =>{
+app.get('/place-a-bet', (req: Request, res: Response) => {
 
   if (!req.session.profile_id) {
-    res.location = '/';
+    res.redirect('/');
     return;
   }
 
