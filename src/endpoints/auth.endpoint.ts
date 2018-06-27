@@ -38,13 +38,13 @@ export class AuthEndpoint {
         const query = 'INSERT INTO profiles ' +
           '(username, password, email, verified, coins, joined, type) ' +
           'VALUES(' +
-          username + ', ' +
-          hashedPW + ', ' +
-          email + ', ' +
+          '\'' + username + '\', ' +
+          '\'' + hashedPW + '\', ' +
+          '\'' + email + '\', ' +
           'TRUE, ' +
           '5, ' +
-          (new Date()).toISOString() + ', ' +
-          'member, ' +
+          '\'' + (new Date()).toISOString() + '\', ' +
+          '\'' + 'member\'' +
           ') RETURNING *' ;
 
         console.log('querying', query);
