@@ -50,6 +50,7 @@ app.get('/place-a-bet', (req, res) =>{
 
   if (!req.session.profile_id) {
     res.location = '/';
+    return;
   }
 
   readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data) => {
