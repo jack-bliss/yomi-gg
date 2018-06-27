@@ -46,7 +46,8 @@ export class AuthEndpoint {
 
         pool.query(query, (err: any, result: { rows: Profile[] }) => {
           if (err) {
-            reject(err);
+            console.error(err);
+            reject(new Errors.InternalServerError('An error occurred.'));
           } else {
             session.profile_id = result.rows[0].id;
             resolve(
@@ -85,10 +86,10 @@ export class AuthEndpoint {
       pool.query('SELECT * FROM profiles where email=\'' + email +'\'', (err, result) => {
         if (err) {
           console.error(err);
-          throw new Errors.InternalServerError('An error occurred: ' + JSON.stringify(err));
+          reject(new Errors.InternalServerError('An error occurred: ' + JSON.stringify(err)));
         }
         if (!result.rows.length) {
-          throw new Errors.NotFoundError('That email address isn\'t registered.');
+          reject(new Errors.NotFoundError('That email address isn\'t registered.'));
         } else {
           bcrypt.compare(password, result.rows[0].password, (err, same) => {
             if (same) {
@@ -98,7 +99,7 @@ export class AuthEndpoint {
                 token: session.id,
               })
             } else {
-              throw new Errors.BadRequestError('That is the wrong password.');
+              reject(new Errors.BadRequestError('That is the wrong password.'));
             }
           })
         }
@@ -125,9 +126,10 @@ export class AuthEndpoint {
       pool.query(query, (err, result) => {
         if (err) {
           console.error(err);
-          throw new Error('An error occurred');
+          reject(new Errors.InternalServerError('An error occurred'));
+        } else {
+          resolve(result.rows.length > 0);
         }
-        resolve(result.rows.length > 0);
       });
     });
   }
@@ -143,9 +145,10 @@ export class AuthEndpoint {
       pool.query(query, (err, result) => {
         if (err) {
           console.error(err);
-          throw new Error('An error occurred');
+          reject(new Errors.InternalServerError(('An error occurred'));
+        } else {
+          resolve(result.rows.length > 0);
         }
-        resolve(result.rows.length > 0);
       });
     });
   }
