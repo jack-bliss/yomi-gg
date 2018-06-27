@@ -34,7 +34,7 @@ app.use(session({
 app.use((req: any, res, next) => {
   if (req.get('Token')) {
     req.sessionID = req.get('Token');
-    req.sesssionStore.get(req.get('Token'), (err, sess) => {
+    req.sesssionStore.get(req.get('Token'), (err: any, sess: any) => {
       req.sessionStore.createSession(req, sess);
       next();
     });
