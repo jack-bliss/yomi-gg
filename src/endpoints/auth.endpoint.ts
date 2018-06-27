@@ -17,6 +17,8 @@ export class AuthEndpoint {
     signUp: AuthData,
   ): Promise<Profile & Token> {
 
+    console.log(signUp);
+
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(signUp.email)) {
@@ -28,6 +30,8 @@ export class AuthEndpoint {
       }
 
       bcrypt.hash(signUp.password, 10).then((hashedPW: string) => {
+
+        console.log(hashedPW);
 
         const query = 'INSERT INTO profiles ' +
           '(username, password, email, verified, coins, joined, type) ' +
@@ -41,7 +45,10 @@ export class AuthEndpoint {
           'member, ' +
           ') RETURNING *' ;
 
+        console.log('querying', query);
+
         pool.query(query, (err: any, result: { rows: Profile[] }) => {
+          console.log('err', typeof err, 'result', typeof result);
           if (err) {
             reject(err);
           } else {
