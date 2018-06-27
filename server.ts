@@ -7,6 +7,7 @@ import { Server } from 'typescript-rest';
 import { ProfileEndpoint } from './src/endpoints/profile.endpoint';
 import { RequestExtended } from './src/interfaces/request-extended.interface';
 import { AuthEndpoint } from './src/endpoints/auth.endpoint';
+import { join } from 'path';
 
 
 const app: express.Application = express();
@@ -37,6 +38,10 @@ Server.buildServices(
   ProfileEndpoint,
   AuthEndpoint,
 );
+
+app.get('/', (req, res) => {
+  res.sendFile(join(__dirname, './src/signup-form.html'));
+});
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);
