@@ -40,7 +40,7 @@ Server.buildServices(
 );
 
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, './src/signup-form.html'));
+  res.sendFile(join(__dirname, './src/index.html'));
 });
 
 app.listen(port, () => {

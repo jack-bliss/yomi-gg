@@ -6,6 +6,7 @@ import { Profile } from '../models/profile.model';
 import { Token } from '../interfaces/token.interface';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import * as bcrypt from 'bcrypt';
+import { QueryArrayResult } from 'pg';
 
 @Path('/auth')
 export class AuthEndpoint {
@@ -66,22 +67,37 @@ export class AuthEndpoint {
   @Path('/log-in')
   @POST
   logIn(
-    @ContextRequest { pool }: RequestExtended,
-    logIn: AuthData,
+    @ContextRequest { pool, session }: RequestExtended,
+    @FormParam('email') email: string,
+    @FormParam('password') password: string,
   ): Promise<Profile & Token> {
 
     return new Promise((resolve, reject) => {
 
-      if (!EmailValidator(logIn.email)) {
+      if (!EmailValidator(email)) {
         throw new Errors.BadRequestError('That email is invalid.');
       }
 
-      if (!PasswordValidator(logIn.password)) {
+      if (!PasswordValidator(password)) {
         throw new Errors.BadRequestError('That password is invalid.');
       }
 
       pool.query('SELECT * FROM profiles where email=' + email, (err, result) => {
-
+        if (!result.rows.length) {
+          throw new Errors.NotFoundError('That email address isn\'t registered.');
+        } else {
+          bcrypt.compare(password, result.rows[0].password, (err, same) => {
+            if (same) {
+              session.profile_id = result.rows[0].id;
+              resolve({
+                ...new Profile(result.rows[0]),
+                token: session.id,
+              })
+            } else {
+              throw new Errors.UnauthorizedError('That is the wrong password.');
+            }
+          })
+        }
       });
 
     });
