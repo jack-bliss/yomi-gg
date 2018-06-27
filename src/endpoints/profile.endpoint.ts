@@ -17,10 +17,10 @@ export class ProfileEndpoint {
 
     const query =
       'SELECT ' +
-      this.publicFields.join(',') +
-      'count(*) OVER() as total ' +
+      this.publicFields.join(', ') + ', ' +
+      'count(*) OVER() AS total ' +
       'FROM profiles LIMIT 10 OFFSET ' +
-      (page * 10) +
+      (page * 10) + ', ' +
       'ORDER BY ' +
       order;
 
