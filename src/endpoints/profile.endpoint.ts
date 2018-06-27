@@ -19,13 +19,17 @@ export class ProfileEndpoint {
       'SELECT ' +
       this.publicFields.join(', ') + ', ' +
       'count(*) OVER() AS total ' +
-      'FROM profiles LIMIT 10 OFFSET ' +
-      (page * 10) + ', ' +
-      'ORDER BY ' +
-      order;
+      'FROM profiles ORDER BY ' +
+      order + ' ' +
+      'LIMIT 10 OFFSET ' +
+      (page * 10);
 
     return new Promise((resolve, reject) => {
       pool.query(query, (err, result) => {
+        if (err) {
+          console.error(err);
+          throw new Error('An error occurred');
+        }
         resolve({
           total: result.rows[0].total,
           page: result.rows.map(p => new PublicProfile(p)),
