@@ -11,6 +11,7 @@ import { join } from 'path';
 import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
 import { readFile } from 'fs';
 import { Request, Response } from 'express';
+import { BetEndpoint } from './src/endpoints/bet.endpoint';
 
 
 const app: express.Application = express();
@@ -41,6 +42,7 @@ Server.buildServices(
   ProfileEndpoint,
   AuthEndpoint,
   SmashggEndpoint,
+  BetEndpoint,
 );
 
 app.get('/', (req, res) => {
