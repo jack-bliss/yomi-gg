@@ -17,5 +17,30 @@
 
 </form>
 
+
+<pre>GET /profile/?page=1</pre>
+<p>Paginated, always thinks there are no more profiles left regardless of how many there are, page size is 10.</p>
+
+<pre>POST /auth/sign-up</pre>
+<p>Form params username, password, email. Password currently sent in plain text and hashed on server.</p>
+
+<pre>POST /auth/log-in</pre>
+<p>For params email, password. Password sent in plain text.</p>
+
+<pre>POST /auth/email-exists?email=blah@me.com</pre>
+<p>Just returns true or false in all lowercase if the email exists/doesn't.</p>
+
+<pre>POST /auth/username-exists?username=CoolGuy420</pre>
+<p>Same as above</p>
+
+<pre>POST /bet/set</pre>
+<p>Form params set_id, prediction, wager, everything else is read from session/server. have to have a valid session.</p>
+
+<pre>GET /bet/set</pre>
+<p>One big list of every bet the user has made on sets. Have to be logged in.</p>
+
+<pre>GET /bet/set/:set_id</pre>
+<p>Returns a breakdown of the bets made on a set wit the matching id (what you posted to /bet/set). Has a total field, and a fieal for each prediction (again, from /bet/set). You have to be an admin for this.</p>
+
 </body>
 </html>

@@ -13,7 +13,6 @@ import { readFile } from 'fs';
 import { Request, Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
 
-
 const app: express.Application = express();
 
 const port: number = parseInt(process.env.PORT) || 3000;
@@ -31,6 +30,18 @@ app.use(session({
   cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }, // 30 days
   saveUninitialized: false,
 }));
+
+app.use((req, res, next) => {
+  if (req.get('Token')) {
+    req.sessionID = req.get('Token');
+    req.sesssionStore.get(req.get('Token'), (err, sess) => {
+      req.sessionStore.createSession(req, sess);
+      next();
+    });
+  } else {
+    next();
+  }
+});
 
 app.use((req: RequestExtended, res, next) => {
   req.pool = pool;
@@ -59,7 +70,7 @@ app.get('/place-a-bet', (req: Request, res: Response) => {
   readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data) => {
     res.send(data.replace(
       '%%user_info%%',
-      '<h2>' + req.session.username + '</h2><h4>' + req.session.coins + '</h4>'
+      '<h2>' + req.session.profile.username + '</h2><h4>' + req.session.profile.coins + '</h4>'
     ));
   });
 

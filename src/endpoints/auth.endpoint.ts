@@ -31,14 +31,13 @@ export class AuthEndpoint {
       bcrypt.hash(password, 10).then((hashedPW: string) => {
 
         const query = 'INSERT INTO profiles ' +
-          '(username, password, email, verified, coins, joined, type) ' +
+          '(username, password, email, verified, coins, type) ' +
           'VALUES(' +
           '\'' + username + '\', ' +
           '\'' + hashedPW + '\', ' +
           '\'' + email + '\', ' +
           'TRUE, ' +
           '5, ' +
-          '\'' + (new Date()).toISOString() + '\', ' +
           '\'' + 'member\'' +
           ') RETURNING *' ;
 
@@ -48,16 +47,13 @@ export class AuthEndpoint {
             reject(new Errors.InternalServerError('An error occurred.'));
           } else {
 
-            session.profile_id = result.rows[0].id;
-            session.coins = result.rows[0].coins;
-            session.username = result.rows[0].username;
+            const me = new Profile(result.rows[0]);
+            session.profile = { ...me };
 
-            resolve(
-              {
-                ...(new Profile(result.rows[0])),
-                token: session.id,
-              }
-            );
+            resolve({
+              ...me,
+              token: session.id,
+            });
           }
         });
 
@@ -96,12 +92,11 @@ export class AuthEndpoint {
           bcrypt.compare(password, result.rows[0].password, (err, same) => {
             if (same) {
 
-              session.profile_id = result.rows[0].id;
-              session.coins = result.rows[0].coins;
-              session.username = result.rows[0].username;
+              const me = new Profile(result.rows[0]);
+              session.profile = { ...me };
 
               resolve({
-                ...new Profile(result.rows[0]),
+                ...me,
                 token: session.id,
               })
             } else {
