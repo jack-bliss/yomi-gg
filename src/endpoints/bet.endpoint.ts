@@ -41,15 +41,13 @@ export class BetEndpoint {
             prediction + ', ' +
             wager + ') RETURNING *';
           console.log(createBetQuery);
-          pool.query(createBetQuery, (err, updated) => {
+          pool.query(createBetQuery, (err, updated: any) => {
             if (err) {
               console.error(err);
               reject(new Error('Something went wrong creating the bet.'));
             } else {
-              console.log(updated);
-              console.log(updated.rows);
               session.coins = newCoins;
-              resolve(new SetBet(updated.rows[0]));
+              resolve(new SetBet(updated[1].rows[0]));
             }
           });
 
