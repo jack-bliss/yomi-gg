@@ -35,7 +35,7 @@ export class BetEndpoint {
           const newCoins = myCoins - wager;
           const createBetQuery =
             'UPDATE profiles SET coins=' + newCoins + ' WHERE id=' + session.profile_id + '; ' +
-            'INERT INTO set_bets (profile_id, set_id, prediction, wager) VALUES(' +
+            'INSERT INTO set_bets (profile_id, set_id, prediction, wager) VALUES(' +
             session.profile_id + ', ' +
             set + ', ' +
             prediction + ', ' +
@@ -47,6 +47,7 @@ export class BetEndpoint {
               reject(new Error('Something went wrong creating the bet.'));
             } else {
               console.log(updated);
+              session.coins = newCoins;
               resolve(new SetBet(updated.rows[0]));
             }
           });
