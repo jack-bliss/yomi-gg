@@ -14,17 +14,12 @@ export class AuthEndpoint {
   @POST
   signUp(
     @ContextRequest { pool, session }: RequestExtended,
-    @FormParam('email') FEmail: string,
-    @FormParam('username') FUsername: string,
-    @FormParam('password') FPassword: string,
-    signUp: AuthData,
+    @FormParam('email') email: string,
+    @FormParam('username') username: string,
+    @FormParam('password') password: string,
   ): Promise<Profile & Token> {
 
-    console.log(signUp);
-
-    const email = FEmail ? FEmail : (signUp.email ? signUp.email : '');
-    const username = FUsername ? FUsername : (signUp.username ? signUp.username : '');
-    const password = FPassword ? FPassword : (signUp.password ? signUp.password : '');
+    console.log(email, username, password);
 
     return new Promise((resolve, reject) => {
 
