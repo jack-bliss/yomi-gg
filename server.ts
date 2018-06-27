@@ -8,6 +8,8 @@ import { ProfileEndpoint } from './src/endpoints/profile.endpoint';
 import { RequestExtended } from './src/interfaces/request-extended.interface';
 import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 import { join } from 'path';
+import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
+import { readFile } from 'fs';
 
 
 const app: express.Application = express();
@@ -37,10 +39,26 @@ Server.buildServices(
   app,
   ProfileEndpoint,
   AuthEndpoint,
+  SmashggEndpoint,
 );
 
 app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, './src/index.html'));
+  res.sendFile(join(__dirname, './src/pages/index.html'));
+});
+
+app.get('/place-a-bet', (req, res) =>{
+
+  if (!req.session.profile_id) {
+    res.location = '/';
+  }
+
+  readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data) => {
+    res.send(data.replace(
+      '%%user_info%%',
+      '<h2>' + req.session.username + '</h2><h4>' + req.session.coins + '</h4>'
+    ));
+  });
+
 });
 
 app.listen(port, () => {

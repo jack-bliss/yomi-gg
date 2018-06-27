@@ -1,0 +1,1 @@
+export type BetOutcome = 'win' | 'loss' | 'pending';

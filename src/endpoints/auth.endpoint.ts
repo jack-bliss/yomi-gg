@@ -1,12 +1,10 @@
 import { ContextRequest, GET, Path, POST, QueryParam, Errors, FormParam } from 'typescript-rest';
-import { AuthData } from '../interfaces/auth-data.interface';
 import { EmailValidator } from '../validators/email.validator';
 import { PasswordValidator } from '../validators/password.validator';
 import { Profile } from '../models/profile.model';
 import { Token } from '../interfaces/token.interface';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import * as bcrypt from 'bcrypt';
-import { QueryArrayResult } from 'pg';
 
 @Path('/auth')
 export class AuthEndpoint {
@@ -49,7 +47,11 @@ export class AuthEndpoint {
             console.error(err);
             reject(new Errors.InternalServerError('An error occurred.'));
           } else {
+
             session.profile_id = result.rows[0].id;
+            session.coins = result.rows[0].coins;
+            session.username = result.rows[0].username;
+
             resolve(
               {
                 ...(new Profile(result.rows[0])),
@@ -93,7 +95,11 @@ export class AuthEndpoint {
         } else {
           bcrypt.compare(password, result.rows[0].password, (err, same) => {
             if (same) {
+
               session.profile_id = result.rows[0].id;
+              session.coins = result.rows[0].coins;
+              session.username = result.rows[0].username;
+
               resolve({
                 ...new Profile(result.rows[0]),
                 token: session.id,
