@@ -19,8 +19,6 @@ export class AuthEndpoint {
     @FormParam('password') password: string,
   ): Promise<Profile & Token> {
 
-    console.log(email, username, password);
-
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(email)) {
@@ -32,8 +30,6 @@ export class AuthEndpoint {
       }
 
       bcrypt.hash(password, 10).then((hashedPW: string) => {
-
-        console.log(hashedPW);
 
         const query = 'INSERT INTO profiles ' +
           '(username, password, email, verified, coins, joined, type) ' +
@@ -47,10 +43,7 @@ export class AuthEndpoint {
           '\'' + 'member\'' +
           ') RETURNING *' ;
 
-        console.log('querying', query);
-
         pool.query(query, (err: any, result: { rows: Profile[] }) => {
-          console.log('err', typeof err, 'result', typeof result);
           if (err) {
             reject(err);
           } else {
@@ -87,6 +80,10 @@ export class AuthEndpoint {
         throw new Errors.BadRequestError('That password is invalid.');
       }
 
+      pool.query('SELECT * FROM profiles where email=' + email, (err, result) => {
+
+      });
+
     });
 
   }
@@ -98,15 +95,18 @@ export class AuthEndpoint {
     @QueryParam('email') email: string,
   ): Promise<boolean> {
 
-    const query = 'SELECT id FROM profiles WHERE email=' + email;
+    const query = 'SELECT id FROM profiles WHERE email=\'' + email + '\'';
 
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(email)) {
         throw new Errors.BadRequestError('That email is invalid.');
       }
-
       pool.query(query, (err, result) => {
+        if (err) {
+          console.error(err);
+          throw new Error('An error occurred');
+        }
         resolve(result.rows.length > 0);
       });
     });
@@ -118,9 +118,13 @@ export class AuthEndpoint {
     @ContextRequest { pool }: RequestExtended,
     @QueryParam('username') username: string,
   ): Promise<boolean> {
-    const query = 'SELECT id FROM profiles WHERE username=' + username;
+    const query = 'SELECT id FROM profiles WHERE username=\'' + username + '\'';
     return new Promise((resolve, reject) => {
       pool.query(query, (err, result) => {
+        if (err) {
+          console.error(err);
+          throw new Error('An error occurred');
+        }
         resolve(result.rows.length > 0);
       });
     });

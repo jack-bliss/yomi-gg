@@ -24,11 +24,8 @@ export class ProfileEndpoint {
       'LIMIT 10 OFFSET ' +
       ((page - 1) * 10);
 
-    console.log('querying', query);
-
     return new Promise((resolve, reject) => {
       pool.query(query, (err, result) => {
-        console.log('pool queried, err:', typeof err, 'result:', typeof result);
         if (err) {
           console.error(err);
           throw new Error('An error occurred');
