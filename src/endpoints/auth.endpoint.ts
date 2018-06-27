@@ -145,7 +145,7 @@ export class AuthEndpoint {
       pool.query(query, (err, result) => {
         if (err) {
           console.error(err);
-          reject(new Errors.InternalServerError(('An error occurred'));
+          reject(new Errors.InternalServerError('An error occurred'));
         } else {
           resolve(result.rows.length > 0);
         }
