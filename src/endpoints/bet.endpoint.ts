@@ -47,6 +47,7 @@ export class BetEndpoint {
               reject(new Error('Something went wrong creating the bet.'));
             } else {
               console.log(updated);
+              console.log(updated.rows);
               session.coins = newCoins;
               resolve(new SetBet(updated.rows[0]));
             }
