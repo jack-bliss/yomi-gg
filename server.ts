@@ -4,9 +4,9 @@ import * as session from 'express-session';
 import * as pgSession from 'connect-pg-simple';
 import { Server } from 'typescript-rest';
 
-import * as bcrypt from 'bcrypt';
-import { ProfileEndpoint } from './endpoints/profile.endpoint';
-import { RequestExtended } from './interfaces/request-extended.interface';
+import { ProfileEndpoint } from './src/endpoints/profile.endpoint';
+import { RequestExtended } from './src/interfaces/request-extended.interface';
+import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 
 
 const app: express.Application = express();
@@ -35,6 +35,7 @@ app.use((req: RequestExtended, res, next) => {
 Server.buildServices(
   app,
   ProfileEndpoint,
+  AuthEndpoint,
 );
 
 app.listen(port, () => {
