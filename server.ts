@@ -31,7 +31,7 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-app.use((req, res, next) => {
+app.use((req: any, res, next) => {
   if (req.get('Token')) {
     req.sessionID = req.get('Token');
     req.sesssionStore.get(req.get('Token'), (err, sess) => {
