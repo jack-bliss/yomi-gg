@@ -31,18 +31,6 @@ app.use(session({
   saveUninitialized: false,
 }));
 
-app.use((req: any, res, next) => {
-  if (req.get('Token')) {
-    req.sessionID = req.get('Token');
-    req.sesssionStore.get(req.get('Token'), (err: any, sess: any) => {
-      req.sessionStore.createSession(req, sess);
-      next();
-    });
-  } else {
-    next();
-  }
-});
-
 app.use((req: RequestExtended, res, next) => {
   req.pool = pool;
   next();
