@@ -75,16 +75,20 @@ export class AuthEndpoint {
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(email)) {
-        throw new Errors.BadRequestError('That email is invalid.');
+        reject('That email is invalid.');
       }
 
       if (!PasswordValidator(password)) {
-        throw new Errors.BadRequestError('That password is invalid.');
+        reject('That password is invalid.');
       }
 
       pool.query('SELECT * FROM profiles where email=\'' + email +'\'', (err, result) => {
+        if (err) {
+          console.error(err);
+          reject('An error occurred: ' + JSON.stringify(err));
+        }
         if (!result.rows.length) {
-          throw new Errors.NotFoundError('That email address isn\'t registered.');
+          reject('That email address isn\'t registered.');
         } else {
           bcrypt.compare(password, result.rows[0].password, (err, same) => {
             if (same) {
@@ -94,7 +98,7 @@ export class AuthEndpoint {
                 token: session.id,
               })
             } else {
-              throw new Errors.UnauthorizedError('That is the wrong password.');
+              reject('That is the wrong password.');
             }
           })
         }
