@@ -8,9 +8,9 @@
 
 %%user_info%%
 
-<form action="/bet/set" method="post">
+<form action="/bet/match" method="post">
 
-    <input type="text" name="set" placeholder="set id" />
+    <input type="text" name="match" placeholder="match id" />
     <input type="text" name="prediction" placeholder="winner id" />
     <input type="text" name="wager" placeholder="wager" />
     <input type="submit" value="Place Bet" />
@@ -32,14 +32,14 @@
 <pre>POST /auth/username-exists?username=CoolGuy420</pre>
 <p>Same as above</p>
 
-<pre>POST /bet/set</pre>
+<pre>POST /bet/match</pre>
 <p>Form params set_id, prediction, wager, everything else is read from session/server. have to have a valid session.</p>
 
-<pre>GET /bet/set</pre>
-<p>One big list of every bet the user has made on sets. Have to be logged in.</p>
+<pre>GET /bet/match</pre>
+<p>One big list of every bet the user has made on matches. Have to be logged in.</p>
 
-<pre>GET /bet/set/:set_id</pre>
-<p>Returns a breakdown of the bets made on a set wit the matching id (what you posted to /bet/set). Has a total field, and a fieal for each prediction (again, from /bet/set). You have to be an admin for this.</p>
+<pre>GET /bet/match/:set_id</pre>
+<p>Returns a breakdown of the bets made on a set with the matching id (what you posted to /bet/match). Has a total field, and a field for each prediction (again, from /bet/match). You have to be an admin for this.</p>
 
 </body>
 </html>

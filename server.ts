@@ -12,6 +12,7 @@ import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
 import { readFile } from 'fs';
 import { Request, Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
+import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
 
 const app: express.Application = express();
 
@@ -50,7 +51,9 @@ app.get('/', (req, res) => {
 
 app.get('/place-a-bet', (req: Request, res: Response) => {
 
-  if (!req.session.profile.id) {
+  try {
+    MemberPreprocessor(req.session);
+  } catch(e) {
     res.redirect('/');
     return;
   }
