@@ -13,7 +13,7 @@ export class BetEndpoint {
   @Preprocessor(MemberPreprocessor)
   placeMatchBet(
     @ContextRequest { pool, session }: RequestExtended,
-    @FormParam('set_id') set_id: number,
+    @FormParam('match_id') match_id: number,
     @FormParam('prediction') prediction: number,
     @FormParam('wager') wager: number,
   ): Promise<MatchBet> {
@@ -34,9 +34,9 @@ export class BetEndpoint {
           const newCoins = myCoins - wager;
           const createBetQuery =
             'UPDATE profiles SET coins=' + newCoins + ' WHERE id=' + session.profile.id + '; ' +
-            'INSERT INTO match_bets (profile_id, set_id, prediction, wager) VALUES(' +
+            'INSERT INTO match_bets (profile_id, match_id, prediction, wager) VALUES(' +
             session.profile.id + ', ' +
-            set_id + ', ' +
+            match_id + ', ' +
             prediction + ', ' +
             wager +
             ') RETURNING *';
@@ -81,17 +81,17 @@ export class BetEndpoint {
 
   }
 
-  @Path('/match/:set_id')
+  @Path('/match/:match_id')
   @GET
   @Preprocessor(AdminPreprocessor)
   getBetsOnMatch(
     @ContextRequest { pool, session }: RequestExtended,
-    @PathParam('set_id') set_id: number,
+    @PathParam('match_id') match_id: number,
   ): Promise<MatchBetBreakdown> {
 
     return new Promise((resolve, reject) => {
 
-      let getTotalWagerOnSetQuery = 'SELECT * FROM match_bets WHERE set_id=' + set_id;
+      let getTotalWagerOnSetQuery = 'SELECT * FROM match_bets WHERE match_id=' + match_id;
       pool.query(getTotalWagerOnSetQuery, (err, response) => {
         if (err) {
           console.error(err);

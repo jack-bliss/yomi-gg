@@ -78,6 +78,9 @@ export class SmashggEndpoint {
 
       const setData = SGSE.sets.reduce((acc, set) => {
 
+        console.log('==set==');
+        console.log(set.id, set.entrant1Id, set.entrant2Id, eventId);
+
         return [
           [...acc[0], set.id,],
           [...acc[1], set.entrant1Id],
@@ -86,6 +89,9 @@ export class SmashggEndpoint {
         ]
 
       }, [[], [], [], []]);
+
+      console.log('==all data==');
+      console.log(setData);
 
       return pool.query(insertSetsQuery, setData);
 
