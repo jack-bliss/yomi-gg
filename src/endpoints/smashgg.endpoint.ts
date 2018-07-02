@@ -55,8 +55,8 @@ export class SmashggEndpoint {
 
       const eventQuery = 'INSERT INTO events (phase_group, name, slug) VALUES (' +
         group_id + ', ' +
-        eventName + ', ' +
-        tournament + ') RETURNING id';
+        '\'' + eventName + '\', ' +
+        '\'' + tournament + '\') RETURNING id';
 
       return pool.query(eventQuery)
 
