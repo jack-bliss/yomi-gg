@@ -6,7 +6,7 @@ export const AdminPreprocessor = (req: RequestExtended): RequestExtended => {
   console.log('user has profile');
   console.log(req.session.profile);
 
-  if (req.session.hasProperties('profile') && req.session.profile.type === 'admin') {
+  if (req.session.hasOwnProperty('profile') && req.session.profile.type === 'admin') {
 
     return req;
 
