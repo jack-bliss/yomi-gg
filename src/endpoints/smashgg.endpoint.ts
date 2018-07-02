@@ -75,12 +75,13 @@ export class SmashggEndpoint {
         'entrant2id, ' +
         'eventid, ' +
         'entrant1tag, ' +
-        'entrant2tag' +
-        ') SELECT * FROM UNNEST ($1::int[], $2::int[], $3::int[], $4::int[], $5::text[], $6::text[])';
+        'entrant2tag, ' +
+        'round' +
+        ') SELECT * FROM UNNEST ($1::int[], $2::int[], $3::int[], $4::int[], $5::text[], $6::text[], $7::text[])';
 
       const setData = SGSE.sets.reduce((acc, set) => {
 
-        if (set.entrant1Id !== null  && set.entrant2Id !== null) {
+        if (set.entrant1PrereqType !== 'bye'  && set.entrant2PrereqType !== 'bye') {
 
           console.log('==set==');
           console.log(set.id, set.entrant1Id, set.entrant2Id, eventId);
@@ -89,14 +90,15 @@ export class SmashggEndpoint {
             [...acc[1], set.entrant1Id],
             [...acc[2], set.entrant2Id],
             [...acc[3], eventId],
-            [...acc[4], players[set.entrant1Id]],
-            [...acc[5], players[set.entrant2Id]],
+            [...acc[4], set.entrant1Id ? players[set.entrant1Id] : 'Pending...'],
+            [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending...'],
+            [...acc[6], set.fullRoundText],
           ];
         } else {
           return acc;
         }
 
-      }, [[], [], [], [], [], []]);
+      }, [[], [], [], [], [], [], []]);
 
       return pool.query(insertSetsQuery, setData);
 

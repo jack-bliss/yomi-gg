@@ -10,5 +10,8 @@ export interface SmashggSet {
   bracketId: string;
   entrant1Score: number;
   entrant2Score: number;
+  fullRoundText: string;
+  entrant1PrereqType: string;
+  entrant2PrereqType: string;
 
 }
