@@ -13,6 +13,7 @@ import { readFile } from 'fs';
 import { Request, Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
 import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
+import { AdminPreprocessor } from './src/preprocessors/admin.preprocessor';
 
 const app: express.Application = express();
 
@@ -49,10 +50,10 @@ app.get('/', (req, res) => {
   res.sendFile(join(__dirname, './src/pages/index.html'));
 });
 
-app.get('/place-a-bet', (req: Request, res: Response) => {
+app.get('/place-a-bet', (req: RequestExtended, res: Response) => {
 
   try {
-    MemberPreprocessor(req.session);
+    MemberPreprocessor(req);
   } catch(e) {
     res.redirect('/');
     return;
@@ -64,6 +65,19 @@ app.get('/place-a-bet', (req: Request, res: Response) => {
       '<h2>' + req.session.profile.username + '</h2><h4>' + req.session.profile.coins + '</h4>'
     ));
   });
+
+});
+
+app.get('/admin', (req: RequestExtended, res: Response) => {
+
+  try {
+    AdminPreprocessor(req);
+  } catch(e) {
+    res.redirect('/');
+    return;
+  }
+
+  res.sendFile(join(__dirname, './src/pages/admin.html'));
 
 });
 
