@@ -71,11 +71,15 @@ app.get('/place-a-bet', (req: RequestExtended, res: Response) => {
 app.get('/admin', (req: RequestExtended, res: Response) => {
 
   try {
+    console.log(req.session.profile);
     AdminPreprocessor(req);
   } catch(e) {
+    console.log(e);
     res.redirect('/');
     return;
   }
+
+  console.log('sending admin page');
 
   res.sendFile(join(__dirname, './src/pages/admin.html'));
 
