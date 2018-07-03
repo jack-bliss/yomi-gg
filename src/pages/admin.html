@@ -7,6 +7,10 @@
         .highlighted {
             background-color: aqua;
         }
+        #match_container div {
+            padding: 10px;
+            border-bottom: 1px solid aliceblue;
+        }
     </style>
 </head>
 <body>
@@ -83,15 +87,20 @@ $(() => {
 
     $("#match_container").on('click', '.highlight', e => {
       const $clicked = $(e.target);
+      const $row = $clicked.parent();
       let url = '/matches/highlight/' + $clicked.attr('data-id')
-      if (!$clicked.parent().hasClass('highlighted')) {
+      if (!$row.hasClass('highlighted')) {
         url += '?level=0';
       }
       $.ajax({
         url: url,
         dataType: 'JSON',
         success: (match) => {
-          $clicked.parent().toggleClass('highlighted');
+          if (match.highlight === 0) {
+            $row.removeClass('highlighted');
+          } else {
+            $row.addClass('highlighted');
+          }
         }
       })
     });
