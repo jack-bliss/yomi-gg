@@ -14,6 +14,8 @@ import { Request, Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
 import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
 import { AdminPreprocessor } from './src/preprocessors/admin.preprocessor';
+import { EventsEndpoint } from './src/endpoints/events.endpoint';
+import { MatchesEndpoint } from './src/endpoints/matches.endpoint';
 
 const app: express.Application = express();
 
@@ -44,6 +46,8 @@ Server.buildServices(
   AuthEndpoint,
   SmashggEndpoint,
   BetEndpoint,
+  EventsEndpoint,
+  MatchesEndpoint,
 );
 
 app.get('/', (req, res) => {
@@ -59,7 +63,7 @@ app.get('/place-a-bet', (req: RequestExtended, res: Response) => {
     return;
   }
 
-  readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data) => {
+  readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data: string) => {
     res.send(data.replace(
       '%%user_info%%',
       '<h2>' + req.session.profile.username + '</h2><h4>' + req.session.profile.coins + '</h4>'
@@ -74,16 +78,15 @@ app.get('/admin', (req: RequestExtended, res: Response) => {
     console.log(req.session.profile);
     AdminPreprocessor(req);
   } catch(e) {
-    console.log(e);
     res.redirect('/');
     return;
   }
 
-  console.log('sending admin page');
-
   res.sendFile(join(__dirname, './src/pages/admin.html'));
 
 });
+
+app.get('/');
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);

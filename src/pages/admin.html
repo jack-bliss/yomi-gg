@@ -14,5 +14,44 @@
 
 </form>
 
+<form id="getMatches">
+
+    <label for="tournament_list">Tournaments</label>
+    <select name="tournament" id="tournament_list">
+
+    </select><br />
+    <input type="submit" value="Load" />
+
+</form>
+
+<div id="match_container">
+
+</div>
+
+<script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+
+<script>
+
+$(() => {
+
+    $.ajax({
+      url: '/events',
+      dataType: 'JSON',
+      success: (data) => {
+        data.forEach(e => {
+            $("#tournament_list").append(
+              $("<option />").val(e.id).text(e.name)
+            );
+        });
+      }
+    });
+
+});
+
+</script>
+
 </body>
 </html>

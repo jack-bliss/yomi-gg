@@ -10,19 +10,16 @@ export class ProfileEndpoint {
 
   @GET
   getProfileById(
-    @QueryParam('page') page: number = 1,
     @QueryParam('order') order: (keyof PublicProfile) = 'id',
     @ContextRequest { pool }: RequestExtended,
-  ): Promise<ResponsePage<PublicProfile>> {
+  ): Promise<PublicProfile[]> {
 
     const query =
       'SELECT ' +
       this.publicFields.join(', ') + ', ' +
       'count(*) OVER() AS total ' +
       'FROM profiles ORDER BY ' +
-      order + ' ' +
-      'LIMIT 10 OFFSET ' +
-      ((page - 1) * 10);
+      order;
 
     return new Promise((resolve, reject) => {
       pool.query(query, (err, result) => {
@@ -30,11 +27,7 @@ export class ProfileEndpoint {
           console.error(err);
           throw new Error('An error occurred');
         }
-        resolve({
-          total: result.rows[0].total,
-          page: result.rows.map(p => new PublicProfile(p)),
-          more: false,
-        });
+        resolve(result.rows.map(p => new PublicProfile(p)));
       });
     });
 

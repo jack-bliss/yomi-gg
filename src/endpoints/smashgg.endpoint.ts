@@ -8,6 +8,7 @@ import { RequestExtended } from '../interfaces/request-extended.interface';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 
 @Path('/smashgg')
+@Preprocessor(AdminPreprocessor)
 export class SmashggEndpoint {
 
   @Path('/tournament/:tournament')
@@ -36,7 +37,6 @@ export class SmashggEndpoint {
 
   @Path('/import/')
   @POST
-  @Preprocessor(AdminPreprocessor)
   importTournament(
     @FormParam('tournament') tournament: string,
     @FormParam('group_id') group_id: number,
