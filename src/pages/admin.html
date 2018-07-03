@@ -10,6 +10,11 @@
         #match_container div {
             padding: 10px;
             border-bottom: 1px solid aliceblue;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+        #match_container div span {
+            display: inline-block;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -71,7 +76,7 @@ $(() => {
                 .addClass(() => m.highlight > 0 ? 'highlighted' : null)
                 .append(
                   $("<span />")
-                    .text(m.entrant1tag + ' v ' + m.entrant2tag + ', ' + m.round)
+                    .append(m.round + ': ' + m.entrant1tag + ' v ' + m.entrant2tag)
                 )
                 .append(
                   $("<button />")
@@ -92,7 +97,7 @@ $(() => {
         url: '/matches/highlight/',
         method: 'post',
         data: {
-          id: $click.attr('data-id'),
+          id: $clicked.attr('data-id'),
           level: $row.hasClass('highlighted') ? 0 : 1,
         },
         dataType: 'JSON',

@@ -1,4 +1,4 @@
-import { Path, GET, ContextRequest, Errors, PathParam } from 'typescript-rest';
+import { Path, GET, ContextRequest, Errors, PathParam, QueryParam } from 'typescript-rest';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { Event } from '../models/event.model';
 import { Match } from '../models/match.model';
@@ -58,11 +58,12 @@ export class EventsEndpoint {
   @GET
   getMatchesByEvent(
     @PathParam('id') id: number,
+    @QueryParam('order') order: (keyof Match) = 'round',
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
 
-      const matchQuery = 'SELECT * FROM matches WHERE event_id=' + id;
+      const matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' ORDER BY ' + order;
       pool.query(matchQuery, (err, response) => {
 
         if (err) {
