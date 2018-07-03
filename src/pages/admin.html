@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin</title>
+    <style>
+        .highlighted {
+            background-color: aqua;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,7 +19,7 @@
 
 </form>
 
-<form id="getMatches">
+<form id="get_matches">
 
     <label for="tournament_list">Tournaments</label>
     <select name="tournament" id="tournament_list">
@@ -40,14 +45,58 @@ $(() => {
     $.ajax({
       url: '/events',
       dataType: 'JSON',
-      success: (data) => {
-        data.forEach(e => {
-            $("#tournament_list").append(
-              $("<option />").val(e.id).text(e.name)
-            );
+      success: (events) => {
+        events.forEach(e => {
+          $("#tournament_list").append(
+            $("<option />").val(e.id).text(e.name)
+          );
         });
       }
     });
+
+    $("#get_matches").submit(e => {
+      e.preventDefault();
+      const id = $("tournament_list").val();
+      $.ajax({
+        url: '/events/' + id + '/matches',
+        dataType: 'JSON',
+        success: (matches) => {
+          matches.forEach(m => {
+            $("#match_container").append(
+              $("<div />")
+                .addClass(() => m.highlight > 0 ? 'highlighted' : null)
+                .append(
+                  $("<span />")
+                    .text(m.entrant1tag + ' v ' + m.entrant2tag + ', ' + m.round)
+                )
+                .append(
+                  $("<button />")
+                    .text('Highlight')
+                    .attr('data-id', m.id)
+                    .addClass('highlight')
+                )
+            );
+          });
+        }
+      })
+    });
+
+    $("#match_container").on('click', '.highlight', e => {
+      const $clicked = $(e.target);
+      let url = '/matches/highlight/' + $clicked.attr('data-id')
+      if (!$clicked.parent().hasClass('highlighted')) {
+        url += '?level=0';
+      }
+      $.ajax({
+        url: url,
+        dataType: 'JSON',
+        success: (match) => {
+          $clicked.parent().toggleClass('highlighted');
+        }
+      })
+    });
+
+
 
 });
 
