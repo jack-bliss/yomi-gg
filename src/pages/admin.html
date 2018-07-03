@@ -88,12 +88,13 @@ $(() => {
     $("#match_container").on('click', '.highlight', e => {
       const $clicked = $(e.target);
       const $row = $clicked.parent();
-      let url = '/matches/highlight/' + $clicked.attr('data-id');
-      if (!$row.hasClass('highlighted')) {
-        url += '?level=0';
-      }
       $.ajax({
-        url: url,
+        url: '/matches/highlight/',
+        method: 'post',
+        data: {
+          id: $click.attr('data-id'),
+          level: $row.hasClass('highlighted') ? 0 : 1,
+        },
         dataType: 'JSON',
         success: (match) => {
           if (match.highlight === 0) {

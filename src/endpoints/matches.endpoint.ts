@@ -1,4 +1,4 @@
-import { Path, GET, POST, Errors, ContextRequest, PathParam, QueryParam, Preprocessor } from 'typescript-rest';
+import { Path, GET, POST, Errors, ContextRequest, PathParam, QueryParam, Preprocessor, FormParam } from 'typescript-rest';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { Match } from '../models/match.model';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
@@ -62,12 +62,12 @@ export class MatchesEndpoint {
 
   }
 
-  @Path('/highlight/:id')
+  @Path('/highlight/')
   @POST
   @Preprocessor(AdminPreprocessor)
   highlightMatchWithId(
-    @QueryParam('level') level: number = 1,
-    @PathParam('id') id: number,
+    @FormParam('level') level: number = 1,
+    @FormParam('id') id: number,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match> {
 
