@@ -10,6 +10,7 @@ export class MatchesEndpoint {
   @GET
   getHighlightedMatches(
     @QueryParam('highlight') highlight: number = null,
+    @QueryParam('exact') exact: boolean = false,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
 
@@ -19,7 +20,7 @@ export class MatchesEndpoint {
       if (highlight === null) {
         matchQuery += '!=0';
       } else {
-        matchQuery += '=' + highlight;
+        matchQuery += (exact ? '' : '>') + '=' + highlight;
       }
 
       pool.query(matchQuery, (err, response) => {
