@@ -104,7 +104,7 @@ export class SmashggEndpoint {
       const orderReady: SmashggSet[] = [...grandFinals, ...notGrandFinals]
         .map((set: SmashggSet) => ({
           ...set,
-          round: set.round > 0 ? (set.round * 3) - 2 : Math.ceil((set.round * 3) / 2),
+          round: set.round > 0 ? (set.round * 3) - 2 : Math.ceil((set.round * -3) / 2),
         }));
 
       const setData: (number | string)[][] = orderReady.reduce((acc, set) => {
