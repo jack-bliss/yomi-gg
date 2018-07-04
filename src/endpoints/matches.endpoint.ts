@@ -25,6 +25,7 @@ export class MatchesEndpoint {
       pool.query(matchQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
         } else {
           resolve(response.rows.map(m => new Match(m)));
@@ -49,6 +50,7 @@ export class MatchesEndpoint {
       pool.query(matchQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the match'));
         } else if (response.rows.length === 0) {
           reject(new Errors.NotFoundError('Couldn\'t find a match with that id'));
@@ -77,6 +79,7 @@ export class MatchesEndpoint {
       pool.query(updateMatchQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Couldn\'t update highlighting of that match!'));
         } else if (response.rows.length === 0) {
           reject(new Errors.NotFoundError('Couldn\'t find a match with that id'));

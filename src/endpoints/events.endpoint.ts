@@ -17,6 +17,7 @@ export class EventsEndpoint {
       pool.query(eventsQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the events'));
         } else {
           resolve(response.rows.map(e => new Event(e)));
@@ -41,6 +42,7 @@ export class EventsEndpoint {
       pool.query(eventQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the events'));
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find an event with that id'));
@@ -72,6 +74,7 @@ export class EventsEndpoint {
       pool.query(matchQuery, (err, response) => {
 
         if (err) {
+          console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
