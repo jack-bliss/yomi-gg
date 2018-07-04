@@ -66,6 +66,7 @@ $(() => {
     $("#get_matches").submit(e => {
       e.preventDefault();
       const id = $("#tournament_list").val();
+      $("#match_container").html('');
       $.ajax({
         url: '/events/' + id + '/matches',
         dataType: 'JSON',
@@ -98,7 +99,7 @@ $(() => {
         method: 'post',
         data: {
           id: $clicked.attr('data-id'),
-          level: $row.hasClass('highlighted') ? 0 : 1,
+          highlight: $row.hasClass('highlighted') ? 0 : 1,
         },
         dataType: 'JSON',
         success: (match) => {

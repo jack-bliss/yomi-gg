@@ -59,11 +59,16 @@ export class EventsEndpoint {
   getMatchesByEvent(
     @PathParam('id') id: number,
     @QueryParam('order') order: (keyof Match) = 'round',
+    @QueryParam('highlight') highlight: number = null,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
 
-      const matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' ORDER BY ' + order;
+      let matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' ';
+      if (highlight !== null) {
+        matchQuery += 'AND highlight=' + highlight + ' ';
+      }
+      matchQuery += 'ORDER BY ' + order;
       pool.query(matchQuery, (err, response) => {
 
         if (err) {

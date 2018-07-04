@@ -73,7 +73,7 @@ export class SmashggEndpoint {
         'set_id, ' +
         'entrant1id, ' +
         'entrant2id, ' +
-        'eventid, ' +
+        'event_id, ' +
         'entrant1tag, ' +
         'entrant2tag, ' +
         'round' +

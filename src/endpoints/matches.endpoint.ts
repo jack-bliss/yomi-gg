@@ -6,6 +6,36 @@ import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 @Path('/matches')
 export class MatchesEndpoint {
 
+  @Path('/highlighted')
+  @GET
+  getHighlightedMatches(
+    @QueryParam('highlight') highlight: number = null,
+    @ContextRequest { pool }: RequestExtended,
+  ): Promise<Match[]> {
+
+    return new Promise((resolve, reject) => {
+
+      let matchQuery = 'SELECT * FROM matches WHERE highlight';
+      if (highlight === null) {
+        matchQuery += '!=0';
+      } else {
+        matchQuery += '=' + highlight;
+      }
+
+      pool.query(matchQuery, (err, response) => {
+
+        if (err) {
+          reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
+        } else {
+          resolve(response.rows.map(m => new Match(m)));
+        }
+
+      })
+
+    });
+
+  }
+
   @Path('/:id')
   @GET
   getMatchById(
@@ -32,48 +62,18 @@ export class MatchesEndpoint {
 
   }
 
-  @Path('/highlighted')
-  @GET
-  getHighlightedMatches(
-    @QueryParam('level') level: number = null,
-    @ContextRequest { pool }: RequestExtended,
-  ): Promise<Match[]> {
-
-    return new Promise((resolve, reject) => {
-
-      let matchQuery = 'SELECT * FROM matches WHERE highlight';
-      if (level === null) {
-        matchQuery += '!=0';
-      } else {
-        matchQuery += '=' + level;
-      }
-
-      pool.query(matchQuery, (err, response) => {
-
-        if (err) {
-          reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
-        } else {
-          resolve(response.rows.map(m => new Match(m)));
-        }
-
-      })
-
-    });
-
-  }
-
   @Path('/highlight/')
   @POST
   @Preprocessor(AdminPreprocessor)
   highlightMatchWithId(
-    @FormParam('level') level: number = 1,
+    @FormParam('highlight') highlight: number = 1,
     @FormParam('id') id: number,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match> {
 
     return new Promise((resolve, reject) => {
 
-      const updateMatchQuery = 'UPDATE matches SET highlight=' + level + ' WHERE id=' + id + ' RETURNING *';
+      const updateMatchQuery = 'UPDATE matches SET highlight=' + highlight + ' WHERE id=' + id + ' RETURNING *';
       pool.query(updateMatchQuery, (err, response) => {
 
         if (err) {
