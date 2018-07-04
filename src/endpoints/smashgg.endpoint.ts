@@ -77,7 +77,7 @@ export class SmashggEndpoint {
         'entrant1tag, ' +
         'entrant2tag, ' +
         'round' +
-        ') SELECT * FROM UNNEST ($1::int[], $2::int[], $3::int[], $4::int[], $5::text[], $6::text[], $7::text[])';
+        ') SELECT * FROM UNNEST ($1::text[], $2::int[], $3::int[], $4::int[], $5::text[], $6::text[], $7::text[])';
 
       const setData = SGSE.sets.reduce((acc, set) => {
 
