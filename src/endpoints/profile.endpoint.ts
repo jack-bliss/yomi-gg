@@ -11,6 +11,7 @@ export class ProfileEndpoint {
   @GET
   getProfileById(
     @QueryParam('order') order: (keyof PublicProfile) = 'id',
+    @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
     @ContextRequest { pool }: RequestExtended,
   ): Promise<PublicProfile[]> {
 
@@ -19,7 +20,7 @@ export class ProfileEndpoint {
       this.publicFields.join(', ') + ', ' +
       'count(*) OVER() AS total ' +
       'FROM profiles ORDER BY ' +
-      order;
+      order + ' ' + direction;
 
     return new Promise((resolve, reject) => {
       pool.query(query, (err, result) => {

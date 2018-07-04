@@ -8,6 +8,7 @@ export class MatchBet {
   prediction: number;
   wager: number;
   outcome: BetOutcome;
+  date: string;
 
   constructor(input: any) {
 
@@ -17,7 +18,19 @@ export class MatchBet {
     this.prediction = input.prediction;
     this.wager = input.wager;
     this.outcome = input.outcome;
+    this.date = input.date;
 
+  }
+
+}
+
+export class MatchBetDate extends MatchBet {
+
+  real_date: Date;
+
+  constructor(input: any) {
+    super(input);
+    this.real_date = new Date(input.date);
   }
 
 }

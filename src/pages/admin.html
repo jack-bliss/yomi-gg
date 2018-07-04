@@ -68,7 +68,7 @@ $(() => {
       const id = $("#tournament_list").val();
       $("#match_container").html('');
       $.ajax({
-        url: '/events/' + id + '/matches',
+        url: '/events/' + id + '/matches?direction=DESC',
         dataType: 'JSON',
         success: (matches) => {
           matches.forEach(m => {

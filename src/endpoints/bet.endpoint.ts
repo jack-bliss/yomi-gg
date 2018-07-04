@@ -61,12 +61,14 @@ export class BetEndpoint {
   @Preprocessor(MemberPreprocessor)
   getMyMatchBets(
     @ContextRequest { pool, session }: RequestExtended,
-    @QueryParam('order') order: string = 'date'
+    @QueryParam('order') order: (keyof MatchBet) = 'date',
+    @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
   ): Promise<MatchBet[]> {
 
     return new Promise((resolve, reject) => {
 
-      const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id;
+      const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id +
+        ' ORDER BY ' + order + ' ' + direction;
 
       pool.query(getMyBetsQuery, (err, response) => {
         if (err) {

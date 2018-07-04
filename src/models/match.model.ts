@@ -12,6 +12,7 @@ export class Match {
   entrant2tag: string;
   round: string;
   highlight: number;
+  round_order: number;
 
   constructor(input: any) {
 
@@ -28,6 +29,7 @@ export class Match {
     this.event_id = input.event_id;
     this.round = input.round;
     this.highlight = input.highlight;
+    this.round_order = input.round_order;
 
   }
 }
