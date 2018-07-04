@@ -13,5 +13,7 @@ export interface SmashggSet {
   fullRoundText: string;
   entrant1PrereqType: string;
   entrant2PrereqType: string;
+  round: number;
+  previewOrder: number;
 
 }

@@ -70,35 +70,59 @@ export class SmashggEndpoint {
     }).then(SGSE => {
 
       const insertSetsQuery = 'INSERT INTO matches (' +
-        'set_id, ' +
-        'entrant1id, ' +
-        'entrant2id, ' +
-        'event_id, ' +
-        'entrant1tag, ' +
-        'entrant2tag, ' +
-        'round' +
-        ') SELECT * FROM UNNEST ($1::text[], $2::int[], $3::int[], $4::int[], $5::text[], $6::text[], $7::text[])';
+          'set_id, ' +
+          'entrant1id, ' +
+          'entrant2id, ' +
+          'event_id, ' +
+          'entrant1tag, ' +
+          'entrant2tag, ' +
+          'round, ' +
+          'round_order' +
+        ') SELECT * FROM UNNEST (' +
+          '$1::text[], ' +
+          '$2::int[], ' +
+          '$3::int[], ' +
+          '$4::int[], ' +
+          '$5::text[], ' +
+          '$6::text[], ' +
+          '$7::text[], ' +
+          '$8::int[]' +
+        ')';
 
-      const setData = SGSE.sets.reduce((acc, set) => {
+      const realSets: SmashggSet[] = SGSE.sets
+        .filter(set => set.entrant1PrereqType !== 'bye'  && set.entrant2PrereqType !== 'bye');
 
-        if (set.entrant1PrereqType !== 'bye'  && set.entrant2PrereqType !== 'bye') {
+      const grandFinals: SmashggSet[] = realSets
+        .filter(s => s.fullRoundText === 'Grand Final')
+        .map((s, i) => ({
+          ...s,
+          round: i === 0 ? s.round : s.round + 1,
+          fullRoundText: i === 0 ? 'Grand Final' : 'Grand Final (Bracket Reset)',
+        }));
+      const notGrandFinals: SmashggSet[] = realSets.filter(s => s.fullRoundText !== 'Grand Final');
 
-          console.log('==set==');
-          console.log(set.id, set.entrant1Id, set.entrant2Id, eventId);
-          return [
-            [...acc[0], set.id,],
-            [...acc[1], set.entrant1Id],
-            [...acc[2], set.entrant2Id],
-            [...acc[3], eventId],
-            [...acc[4], set.entrant1Id ? players[set.entrant1Id] : 'Pending...'],
-            [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending...'],
-            [...acc[6], set.fullRoundText],
-          ];
-        } else {
-          return acc;
-        }
+      const orderReady: SmashggSet[] = [...grandFinals, ...notGrandFinals]
+        .map((set: SmashggSet) => ({
+          ...set,
+          round: set.round > 0 ? (set.round * 3) - 2 : Math.ceil((set.round * 3) / 2),
+        }));
 
-      }, [[], [], [], [], [], [], []]);
+      const setData: (number | string)[][] = orderReady.reduce((acc, set) => {
+
+        console.log('==set==');
+        console.log(set.id, set.entrant1Id, set.entrant2Id, eventId);
+        return [
+          [...acc[0], set.id,],
+          [...acc[1], set.entrant1Id],
+          [...acc[2], set.entrant2Id],
+          [...acc[3], eventId],
+          [...acc[4], set.entrant1Id ? players[set.entrant1Id] : 'Pending...'],
+          [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending...'],
+          [...acc[6], set.fullRoundText],
+          [...acc[7], set.round],
+        ];
+
+      }, [[], [], [], [], [], [], [], []]);
 
       return pool.query(insertSetsQuery, setData);
 
