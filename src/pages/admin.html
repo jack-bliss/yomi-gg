@@ -53,6 +53,7 @@ $(() => {
 
     function listMatches(id) {
       const $mc = $("#match_container");
+      const $tl = $("#tournament_list");
       $mc.html('');
       $.ajax({
         url: '/events/' + id + '/matches?direction=DESC',
@@ -62,7 +63,7 @@ $(() => {
           $mc.append(
             $("<div />")
               .append(
-                $("<h2 />").text(allEvents[$mc.selectedIndex].name)
+                $("<h2 />").text(allEvents[$tl.selectedIndex].name)
               )
               .append(
                 $("<button />").text('update').attr('data-id', id).addClass('update')
