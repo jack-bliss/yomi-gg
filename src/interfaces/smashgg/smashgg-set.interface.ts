@@ -1,6 +1,7 @@
 export interface SmashggSet {
 
   id: number;
+  identifier: string;
   eventId: number;
   phaseGroupId: number;
   entrant1Id: number;

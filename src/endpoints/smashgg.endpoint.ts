@@ -87,7 +87,8 @@ export class SmashggEndpoint {
           'entrant1tag, ' +
           'entrant2tag, ' +
           'round, ' +
-          'round_order' +
+          'round_order, ' +
+          'identifier' +
         ') SELECT * FROM UNNEST (' +
           '$1::text[], ' +
           '$2::int[], ' +
@@ -97,6 +98,7 @@ export class SmashggEndpoint {
           '$6::text[], ' +
           '$7::text[], ' +
           '$8::int[]' +
+          '$9::text[]' +
         ')';
 
       const realSets: SmashggSet[] = SGSE.sets
@@ -131,9 +133,10 @@ export class SmashggEndpoint {
           [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending'],
           [...acc[6], set.fullRoundText],
           [...acc[7], set.round],
+          [...acc[9], set.identifier],
         ];
 
-      }, [[], [], [], [], [], [], [], []]);
+      }, [[], [], [], [], [], [], [], [], []]);
 
       return pool.query(insertSetsQuery, setData);
 
