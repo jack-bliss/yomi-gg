@@ -6,6 +6,7 @@ import { GetSet } from '../smashgg/get-set';
 import { Event } from '../models/event.model';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
+import { SmashggTournament } from '../interfaces/smashgg/smashgg-tournament.interface';
 
 @Path('/smashgg')
 @Preprocessor(AdminPreprocessor)
@@ -48,17 +49,24 @@ export class SmashggEndpoint {
 
     return GetTournament(tournament).then(STE => {
 
-      eventName = STE.tournament.name;
+      const T: SmashggTournament = STE.tournament;
+      eventName = T.name;
       STE.entrants.forEach(e => {
         players[e.id] = e.name;
       });
 
-      const eventQuery = 'INSERT INTO events (phase_group, name, slug) VALUES (' +
-        group_id + ', ' +
-        '\'' + eventName + '\', ' +
-        '\'' + tournament + '\') RETURNING id';
+      const eventQuery = 'INSERT INTO events (phase_group, name, slug, image, starting) VALUES (' +
+        '$1, ' +
+        '$2::text, ' +
+        '$3::text, ' +
+        '$4::text, ' +
+        '$5' +
+        ') RETURNING id';
 
-      return pool.query(eventQuery)
+      return pool.query(
+        eventQuery,
+        [group_id, eventName, tournament, T.images[0], new Date(T.startAt * 1000)],
+      )
 
 
     }).then((eventResult) => {

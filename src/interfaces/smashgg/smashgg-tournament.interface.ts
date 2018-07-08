@@ -10,4 +10,5 @@ export interface SmashggTournament {
   hashtag: string;
   details: string;
   images: SmashggImage[];
+  startAt: number;
 }
