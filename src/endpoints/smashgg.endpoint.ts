@@ -259,13 +259,14 @@ export class SmashggEndpoint {
         }).then(d => {
 
           const updateQuery = 'UPDATE matches ' +
-            'SET set_id = set_id, ' +
-            'entrant1id = entrant1id, ' +
-            'entrant2id = entrant2id, ' +
-            'entrant1tag = entrant1tag, ' +
-            'entrant2tag = entrant2tag, ' +
-            'winner = winner, ' +
-            'entrant1Score = entrant1Score ' +
+            'SET set_id = updates.set_id, ' +
+            'entrant1id = updates.entrant1id, ' +
+            'entrant2id = updates.entrant2id, ' +
+            'entrant1tag = updates.entrant1tag, ' +
+            'entrant2tag = updates.entrant2tag, ' +
+            'winner = updates.winner, ' +
+            'entrant1Score = updates.entrant1Score, ' +
+            'entrant2Score = updates.entrant2Score ' +
             'FROM updates WHERE matches.identifier = updates.identifier AND matches.event_id=' + id;
 
           return client.query(updateQuery);
