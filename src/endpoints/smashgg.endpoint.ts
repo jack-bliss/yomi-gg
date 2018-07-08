@@ -133,7 +133,7 @@ export class SmashggEndpoint {
           [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending'],
           [...acc[6], set.fullRoundText],
           [...acc[7], set.round],
-          [...acc[9], set.identifier],
+          [...acc[8], set.identifier],
         ];
 
       }, [[], [], [], [], [], [], [], [], []]);
