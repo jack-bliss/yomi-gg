@@ -51,7 +51,7 @@ export class SmashggEndpoint {
 
       const T: SmashggTournament = STE.tournament;
       eventName = T.name;
-      image = T.images[0];
+      image = T.images[0].url;
       starting = new Date(T.startAt * 1000);
       STE.entrants.forEach(e => {
         players[e.id] = e.name;
