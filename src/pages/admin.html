@@ -51,28 +51,26 @@
 
 $(() => {
 
-    $.ajax({
-      url: '/events',
-      dataType: 'JSON',
-      success: (events) => {
-        events.forEach(e => {
-          $("#tournament_list").append(
-            $("<option />").val(e.id).text(e.name)
-          );
-        });
-      }
-    });
-
-    $("#get_matches").submit(e => {
-      e.preventDefault();
-      const id = $("#tournament_list").val();
-      $("#match_container").html('');
+    function listMatches(id) {
+      const $mc = $("#match_container");
+      $mc.html('');
       $.ajax({
         url: '/events/' + id + '/matches?direction=DESC',
         dataType: 'JSON',
         success: (matches) => {
+
+          $mc.append(
+            $("<div />")
+              .append(
+                $("<h2 />").text(allEvents[$mc.selectedIndex].name)
+              )
+              .append(
+                $("<button />").text('update').attr('data-id', id).addClass('update')
+              )
+          );
+
           matches.forEach(m => {
-            $("#match_container").append(
+            $mc.append(
               $("<div />")
                 .addClass(() => m.highlight > 0 ? 'highlighted' : null)
                 .append(
@@ -89,6 +87,27 @@ $(() => {
           });
         }
       })
+    }
+
+    let allEvents = [];
+
+    $.ajax({
+      url: '/events',
+      dataType: 'JSON',
+      success: (events) => {
+        allEvents = events;
+        events.forEach(e => {
+          $("#tournament_list").append(
+            $("<option />").val(e.id).text(e.name)
+          );
+        });
+      }
+    });
+
+    $("#get_matches").submit(e => {
+      e.preventDefault();
+      const id = $("#tournament_list").val();
+      listMatches(id);
     });
 
     $("#match_container").on('click', '.highlight', e => {
@@ -108,6 +127,22 @@ $(() => {
           } else {
             $row.addClass('highlighted');
           }
+        }
+      })
+    });
+
+    $("#match_container").on('click', '.update', e => {
+      const $clicked = $(e.target);
+      const id = $clicked.attr('data-id');
+      $.ajax({
+        url: '/matches/highlight/',
+        method: 'post',
+        data: {
+          id: id,
+        },
+        dataType: 'JSON',
+        success: (match) => {
+          listMatches(id);
         }
       })
     });
