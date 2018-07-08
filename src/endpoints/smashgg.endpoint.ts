@@ -44,13 +44,15 @@ export class SmashggEndpoint {
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Event> {
 
-    let eventName: string, eventId: number;
+    let eventName: string, eventId: number, image: string, starting: Date;
     const players: { [key: number]: string } = {};
 
     return GetTournament(tournament).then(STE => {
 
       const T: SmashggTournament = STE.tournament;
       eventName = T.name;
+      image = T.images[0];
+      starting = new Date(T.startAt * 1000);
       STE.entrants.forEach(e => {
         players[e.id] = e.name;
       });
@@ -65,7 +67,7 @@ export class SmashggEndpoint {
 
       return pool.query(
         eventQuery,
-        [group_id, eventName, tournament, T.images[0], new Date(T.startAt * 1000)],
+        [group_id, eventName, tournament, image, starting],
       )
 
 
@@ -102,6 +104,7 @@ export class SmashggEndpoint {
 
       const grandFinals: SmashggSet[] = realSets
         .filter(s => s.fullRoundText === 'Grand Final')
+        .sort((a, b) => a.previewOrder - b.previewOrder)
         .map((s, i) => ({
           ...s,
           round: i === 0 ? s.round : s.round + 1,
@@ -124,8 +127,8 @@ export class SmashggEndpoint {
           [...acc[1], set.entrant1Id],
           [...acc[2], set.entrant2Id],
           [...acc[3], eventId],
-          [...acc[4], set.entrant1Id ? players[set.entrant1Id] : 'Pending...'],
-          [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending...'],
+          [...acc[4], set.entrant1Id ? players[set.entrant1Id] : 'Pending'],
+          [...acc[5], set.entrant2Id ? players[set.entrant2Id] : 'Pending'],
           [...acc[6], set.fullRoundText],
           [...acc[7], set.round],
         ];
@@ -142,6 +145,8 @@ export class SmashggEndpoint {
         name: eventName,
         phase_group: group_id,
         slug: tournament,
+        image: image,
+        starting: starting,
       }));
 
     });
