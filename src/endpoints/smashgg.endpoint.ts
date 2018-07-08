@@ -220,7 +220,7 @@ export class SmashggEndpoint {
             'entrant2tag, ' +
             'winner, ' +
             'entrant1Score, ' +
-            'entrant2Score, ' +
+            'entrant2Score' +
           ') SELECT * FROM UNNEST (' +
             '$1::text[], ' + // set id
             '$2::text[], ' + // identifier
