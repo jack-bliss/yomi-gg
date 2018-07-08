@@ -61,7 +61,7 @@ $(() => {
         url: '/events/' + id + '/matches?direction=DESC',
         dataType: 'JSON',
         success: (matches) => {
-          
+
           $mc.append(
             $("<div />")
               .append(
@@ -136,7 +136,7 @@ $(() => {
       const $clicked = $(e.target);
       const id = $clicked.attr('data-id');
       $.ajax({
-        url: '/matches/highlight/',
+        url: '/smashgg/update-event/',
         method: 'post',
         data: {
           id: id,
