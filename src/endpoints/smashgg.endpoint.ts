@@ -97,7 +97,7 @@ export class SmashggEndpoint {
           '$5::text[], ' +
           '$6::text[], ' +
           '$7::text[], ' +
-          '$8::int[]' +
+          '$8::int[], ' +
           '$9::text[]' +
         ')';
 
