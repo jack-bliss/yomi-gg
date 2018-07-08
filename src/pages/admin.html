@@ -61,13 +61,11 @@ $(() => {
         url: '/events/' + id + '/matches?direction=DESC',
         dataType: 'JSON',
         success: (matches) => {
-
-          console.log(allEvents);
-
+          
           $mc.append(
             $("<div />")
               .append(
-                $("<h2 />").text(allEvents[$tl.selectedIndex].name)
+                $("<h2 />").text(allEvents[$tl[0].selectedIndex].name)
               )
               .append(
                 $("<button />").text('update').attr('data-id', id).addClass('update')
