@@ -83,6 +83,12 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     values.push(nOf(values[0].length, totalBacking));
     values.push(nOf(values[0].length, totalPayout));
+    matchBetUpdates = matchBetUpdates.map(b => {
+      if (b[1] === 'loss') {
+        return [b[0], b[1], totalBacking, 0];
+      }
+      return [b[0], b[1], totalBacking, totalPayout];
+    });
 
     return client.query(updateTempTable, values);
 
@@ -129,6 +135,8 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     const tempTableQuery2 = 'CREATE TEMP TABLE bet_updates (' +
       'id BIGINT, ' +
       'outcome VARCHAR(15), ' +
+      'total_backing REAL, ' +
+      'total_payout REAL' +
     ');';
 
     return client.query(tempTableQuery2);
@@ -142,10 +150,14 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     const updateTempTableBets = 'INSERT INTO bet_updates (' +
       'id, ' +
-      'outcome' +
+      'outcome, ' +
+      'total_backing, ' +
+      'total_payout' +
     ') SELECT * FROM UNNEST (' +
       '$1::int[], ' +
-      '$2::text[]' +
+      '$2::text[], ' +
+      '$3::float[], ' +
+      '$4::float[]' +
     ')';
 
     return client.query(updateTempTableBets, matchBetUpdates);
@@ -153,7 +165,8 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
   }).then(() => {
 
     const updateMatchBetsQuery = 'UPDATE match_bets SET ' +
-      'outcome = bet_updates.outcome' +
+      'outcome = bet_updates.outcome, ' +
+      'winnings = bet_updates.total_payout * (match_bets.wager / bet_updates.total_backing) ' +
       'FROM bet_updates WHERE match_bets.id = bet_updates.id';
 
     return client.query(updateMatchBetsQuery);
@@ -162,7 +175,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     client.release();
     return Promise.resolve(true);
-    
+
   });
 
 };
