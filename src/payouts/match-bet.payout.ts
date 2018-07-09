@@ -12,6 +12,8 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
   let totalPayout = 0;
   let totalBacking = 0;
 
+  let matchBetUpdates = nNestedArrays<number | string>(2);
+
   return pool.connect().then((c: PoolClient) => {
     client = c;
     const tempTableQuery = 'CREATE TEMP TABLE profile_updates (' +
@@ -62,13 +64,17 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     const values: number[][] = response.rows.reduce((acc, row: MatchBet) => {
 
+      matchBetUpdates[0].push(row.id);
+
       if (row.prediction === match.winner) {
+        matchBetUpdates[1].push('win');
         totalBacking += row.wager;
         return [
           [...acc[0], row.profile_id],
           [...acc[1], row.wager],
         ]
       } else {
+        matchBetUpdates[1].push('loss');
         totalPayout += row.wager;
         return acc;
       }
@@ -120,14 +126,43 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then(r => {
 
-    client.release();
-    return Promise.resolve(true);
+    const tempTableQuery2 = 'CREATE TEMP TABLE bet_updates (' +
+      'id BIGINT, ' +
+      'outcome VARCHAR(15), ' +
+    ');';
+
+    return client.query(tempTableQuery2);
 
   }, err => {
 
     console.error('Couldn\'t update profiles :(');
     console.error(err);
 
+  }).then (() => {
+
+    const updateTempTableBets = 'INSERT INTO bet_updates (' +
+      'id, ' +
+      'outcome' +
+    ') SELECT * FROM UNNEST (' +
+      '$1::int[], ' +
+      '$2::text[]' +
+    ')';
+
+    return client.query(updateTempTableBets, matchBetUpdates);
+
+  }).then(() => {
+
+    const updateMatchBetsQuery = 'UPDATE match_bets SET ' +
+      'outcome = bet_updates.outcome' +
+      'FROM bet_updates WHERE match_bets.id = bet_updates.id';
+
+    return client.query(updateMatchBetsQuery);
+
+  }).then(() => {
+
+    client.release();
+    return Promise.resolve(true);
+    
   });
 
 };
