@@ -16,6 +16,7 @@ import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
 import { AdminPreprocessor } from './src/preprocessors/admin.preprocessor';
 import { EventsEndpoint } from './src/endpoints/events.endpoint';
 import { MatchesEndpoint } from './src/endpoints/matches.endpoint';
+import { PayoutEndpoint } from './src/endpoints/payout.endpoint';
 
 const app: express.Application = express();
 
@@ -48,6 +49,7 @@ Server.buildServices(
   BetEndpoint,
   EventsEndpoint,
   MatchesEndpoint,
+  PayoutEndpoint,
 );
 
 app.get('/', (req, res) => {

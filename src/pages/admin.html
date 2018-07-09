@@ -86,6 +86,12 @@ $(() => {
                     .attr('data-id', m.id)
                     .addClass('highlight')
                 )
+                .append(
+                  $("<button />")
+                    .text('Pay Out')
+                    .attr('data-id', m.id)
+                    .addClass('payout')
+                )
             );
           });
         }
@@ -147,6 +153,22 @@ $(() => {
         }
       })
     });
+
+  $("#match_container").on('click', '.payout', e => {
+    const $clicked = $(e.target);
+    const id = $clicked.attr('data-id');
+    $.ajax({
+      url: '/payout/match/',
+      method: 'post',
+      data: {
+        id: id,
+      },
+      dataType: 'JSON',
+      success: (match) => {
+        listMatches(id);
+      }
+    })
+  });
 
 
 
