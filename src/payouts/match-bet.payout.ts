@@ -2,6 +2,7 @@ import { Pool, PoolClient, QueryResult } from 'pg';
 import { Match } from '../models/match.model';
 import { MatchBet } from '../models/match-bet.model';
 import { nNestedArrays } from '../utility/nNestedArrays';
+import { nOf } from '../utility/nOf';
 
 export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: number, pool: Pool) => {
 
@@ -47,10 +48,14 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     const updateTempTable = 'INSERT INTO profile_updates (' +
       'id, ' +
-      'coins' +
+      'coins, ' +
+      'total_backing, ' +
+      'total_payout, ' +
     ') SELECT * FROM UNNEST (' +
       '$1::int[], ' + // profile id
-      '$2::int[]' + // coins
+      '$2::int[],' + // coins
+      '$3::int[],' + // total_backing
+      '$4::int[]' + // total_payout
     '); ';
 
     const values: number[][] = response.rows.reduce((acc, row: MatchBet) => {
@@ -59,7 +64,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
         totalBacking += row.wager;
         return [
           [...acc[0], row.profile_id],
-          [...acc[1], row.wager]
+          [...acc[1], row.wager],
         ]
       } else {
         totalPayout += row.wager;
@@ -67,6 +72,9 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       }
 
     }, nNestedArrays<number>(2));
+
+    values.push(nOf(values[0].length, totalBacking));
+    values.push(nOf(values[0].length, totalPayout));
 
     return client.query(updateTempTable, values);
 
@@ -92,10 +100,14 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then(() => {
 
+    const coinFunction =
+      '(profiles.coins + profile_updates.coins + ' +
+      '(profile_updates.total_payout * (profile_updates.coins / profile_updates.total_backing))) ';
+
     const updateQuery = 'UPDATE profiles SET ' +
       'coins = ' +
-      '(profiles.coins + profile_updates.coins + (match.total_payout * (profile_updates.coins / match.total_backing))) ' +
-      'FROM profile_updates, matches WHERE profiles.id = profile_updates.id AND match.id=' + id;
+      coinFunction +
+      'FROM profile_updates WHERE profiles.id = profile_updates.id';
 
     return client.query(updateQuery);
 
