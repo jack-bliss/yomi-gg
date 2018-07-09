@@ -26,7 +26,12 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     const matchQuery = 'UPDATE matches SET state=\'complete\' WHERE id=' + id + ' RETURNING *';
     return client.query(matchQuery);
 
-  }).then((m) => {
+  }, err => {
+
+    console.error('Couldn\'t create temp table');
+    console.error(err);
+
+  }).then((m: QueryResult) => {
 
     match = m.rows[0];
 
@@ -35,7 +40,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    console.error('Couldn\'t create temp table');
+    console.error('Couldn\'t update match');
     console.error(err);
 
   }).then((response: QueryResult) => {
@@ -65,15 +70,25 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     return client.query(updateTempTable, values);
 
+  }, err => {
+
+    console.error('Couldn\'t select match_bets');
+    console.error(err);
+
   }).then(() => {
 
-    const updateMatch = 'UPDATE match SET ' +
+    const updateMatch = 'UPDATE matches SET ' +
       'total_payout=' + totalPayout + ', ' +
       'total_backing=' + totalBacking + ' ' +
       'WHERE id=' + id;
 
 
     return client.query(updateMatch);
+
+  }, err => {
+
+    console.error('Couldn\'t insert into temp table');
+    console.error(err);
 
   }).then(() => {
 
@@ -84,10 +99,20 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     return client.query(updateQuery);
 
+  }, err => {
+
+    console.error('Couldn\'t update matches');
+    console.error(err);
+
   }).then(r => {
 
     client.release();
     return Promise.resolve(true);
+
+  }, err => {
+
+    console.error('Couldn\'t update profiles :(');
+    console.error(err);
 
   });
 
