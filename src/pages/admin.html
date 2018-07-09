@@ -164,8 +164,8 @@ $(() => {
         id: id,
       },
       dataType: 'JSON',
-      success: (match) => {
-        listMatches(id);
+      success: () => {
+        console.log('done!');
       }
     })
   });

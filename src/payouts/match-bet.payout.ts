@@ -95,7 +95,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     const updateQuery = 'UPDATE profiles SET ' +
       'coins = ' +
       '(profiles.coins + profile_updates.coins + (match.total_payout * (profile_updates.coins / match.total_backing))) ' +
-      'FROM profile_updates, matches WHERE profiles.id = profile_updates.coins AND match.id=' + id;
+      'FROM profile_updates, matches WHERE profiles.id = profile_updates.id AND match.id=' + id;
 
     return client.query(updateQuery);
 
