@@ -171,11 +171,18 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     return client.query(updateMatchBetsQuery);
 
+  }, err => {
+    console.error('couldnt create temp table');
+    console.error(err);
   }).then(() => {
 
     client.release();
     return Promise.resolve(true);
 
+  }, err => {
+    console.error(matchBetUpdates[0], matchBetUpdates[2], matchBetUpdates[3], matchBetUpdates[3]);
+    console.error('couldnt update match bets');
+    console.error(err);
   });
 
 };
