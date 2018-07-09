@@ -15,8 +15,10 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
   return pool.connect().then((c: PoolClient) => {
     client = c;
     const tempTableQuery = 'CREATE TEMP TABLE profile_updates (' +
-      'id NUMERIC(10),' +
-      'coins NUMERIC' +
+      'id bigint, ' +
+      'coins real, ' +
+      'total_backing real, ' +
+      'total_payout real' +
       ');';
     return client.query(tempTableQuery);
   }, err => {
@@ -50,11 +52,11 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       'id, ' +
       'coins, ' +
       'total_backing, ' +
-      'total_payout, ' +
+      'total_payout' +
     ') SELECT * FROM UNNEST (' +
       '$1::int[], ' + // profile id
-      '$2::int[],' + // coins
-      '$3::int[],' + // total_backing
+      '$2::int[], ' + // coins
+      '$3::int[], ' + // total_backing
       '$4::int[]' + // total_payout
     '); ';
 
