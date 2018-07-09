@@ -7,6 +7,10 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   let client: PoolClient;
   let match: Match;
+
+  let totalPayout = 0;
+  let totalBacking = 0;
+
   return pool.connect().then((c: PoolClient) => {
     client = c;
     const tempTableQuery = 'CREATE TEMP TABLE profile_updates (' +
@@ -36,9 +40,6 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then((response: QueryResult) => {
 
-    let totalPayout = 0;
-    let totalBacking = 0;
-
     const updateTempTable = 'INSERT INTO profile_updates (' +
       'id, ' +
       'coins' +
@@ -62,14 +63,19 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     }, nNestedArrays<number>(2));
 
+    return client.query(updateTempTable, values);
+
+  }).then(() => {
+
     const updateMatch = 'UPDATE match SET ' +
       'total_payout=' + totalPayout + ', ' +
       'total_backing=' + totalBacking + ' ' +
       'WHERE id=' + id;
 
-    return client.query(updateTempTable + updateMatch, values);
 
-  }).then(response => {
+    return client.query(updateMatch);
+
+  }).then(() => {
 
     const updateQuery = 'UPDATE profiles SET ' +
       'coins = ' +
