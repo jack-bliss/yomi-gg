@@ -82,7 +82,6 @@ export class EventsEndpoint {
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
         } else {
-          console.log(response.rows[0]);
           resolve(response.rows.map(e => new Match(e)));
         }
 

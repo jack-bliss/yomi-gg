@@ -1,6 +1,5 @@
 export class Match {
   id: number;
-  set_id: number;
   entrant1id: number;
   entrant2id: number;
   state: string;
@@ -17,9 +16,8 @@ export class Match {
   constructor(input: any) {
 
     this.id = input.id;
-    this.set_id = input.set_id;
-    this.entrant1id = input.entrant1Id;
-    this.entrant2id = input.entrant2Id;
+    this.entrant1id = input.entrant1id;
+    this.entrant2id = input.entrant2id;
     this.state = input.state;
     this.winner = input.winner;
     this.entrant1score = input.entrant1score;
