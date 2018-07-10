@@ -9,7 +9,7 @@ export class ProfileEndpoint {
   publicFields = PublicProfile.fields;
 
   @GET
-  getProfileById(
+  getProfiles(
     @QueryParam('order') order: (keyof PublicProfile) = 'id',
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
     @ContextRequest { pool }: RequestExtended,

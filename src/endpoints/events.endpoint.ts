@@ -43,7 +43,7 @@ export class EventsEndpoint {
 
         if (err) {
           console.error(err);
-          reject(new Errors.InternalServerError('Something went wrong fetching the events'));
+          reject(new Errors.InternalServerError('Something went wrong fetching the event'));
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find an event with that id'));
         } else {
@@ -82,6 +82,7 @@ export class EventsEndpoint {
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
         } else {
+          console.log(response.rows[0]);
           resolve(response.rows.map(e => new Match(e)));
         }
 
