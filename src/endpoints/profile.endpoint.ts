@@ -1,4 +1,4 @@
-import { Path, GET, ContextRequest, QueryParam, Preprocessor } from 'typescript-rest';
+import { Path, GET, ContextRequest, QueryParam, Preprocessor, Errors } from 'typescript-rest';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { PublicProfile } from '../models/public-profile.model';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
