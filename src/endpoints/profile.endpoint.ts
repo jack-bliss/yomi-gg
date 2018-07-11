@@ -48,7 +48,7 @@ export class ProfileEndpoint {
   getMyProfile(
     @ContextRequest { pool, session }: RequestExtended,
   ): Promise<Profile> {
-    const query = 'SELECT * FROM profiles WHERE id=' + session.id;
+    const query = 'SELECT * FROM profiles WHERE id=' + session.profile.id;
     return pool.query(query).then(response => {
       return new Profile(response.rows[0]);
     });
