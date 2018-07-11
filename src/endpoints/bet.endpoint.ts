@@ -87,9 +87,10 @@ export class BetEndpoint {
       // const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id +
       //   ' ORDER BY ' + order + ' ' + direction;
 
-      const getMyBetsQuery = 'SELECT entrant1id, entrant2id, entrant1tag, entrant2tag, prediction, wager, round_name ' +
-        'FROM match_bets, matches ' +
-        'WHERE match_bets.match_id = matches.id AND profile_id = ' + session.profile.id +
+      const getMyBetsQuery = 'SELECT ' +
+        'entrant1id, entrant2id, entrant1tag, entrant2tag, prediction, wager, round, round_order, event_id, name ' +
+        'FROM match_bets, matches, events ' +
+        'WHERE match_bets.match_id = matches.id AND events.id = matches.event_id AND profile_id = ' + session.profile.id +
         ' ORDER BY %I ' + direction;
 
       pool.query(escape(getMyBetsQuery, order), (err, response) => {
