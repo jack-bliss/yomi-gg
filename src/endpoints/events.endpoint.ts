@@ -2,6 +2,7 @@ import { Path, GET, ContextRequest, Errors, PathParam, QueryParam } from 'typesc
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { Event } from '../models/event.model';
 import { Match } from '../models/match.model';
+import * as escape from 'pg-escape';
 
 @Path('/events')
 export class EventsEndpoint {
@@ -36,6 +37,10 @@ export class EventsEndpoint {
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Event> {
 
+    if (typeof id !== 'number') {
+      throw new Errors.BadRequestError('id must be a number');
+    }
+
     return new Promise((resolve, reject) => {
 
       const eventQuery = 'SELECT * FROM events WHERE id=' + id;
@@ -68,13 +73,28 @@ export class EventsEndpoint {
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
 
+      if (typeof id !== 'number') {
+        throw new Errors.BadRequestError('id must be a number');
+      }
+
+      if (typeof highlight !== 'number') {
+        throw new Errors.BadRequestError('highlight must be a number');
+      }
+
+      if (typeof exact !== 'boolean') {
+        throw new Errors.BadRequestError('exact must be a boolean');
+      }
+
+      if (direction !== 'ASC' && direction !== 'DESC') {
+        throw new Errors.BadRequestError('direction is invalid');
+      }
 
       let matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' ';
       if (highlight !== null) {
         matchQuery += 'AND highlight ' + (exact ? '' : '>') + '=' + highlight + ' ';
       }
-      matchQuery += 'ORDER BY ' + order + ' ' + direction;
-      pool.query(matchQuery, (err, response) => {
+      matchQuery += 'ORDER BY %I ' + direction;
+      pool.query(escape(matchQuery, order), (err, response) => {
 
         if (err) {
           console.error(err);

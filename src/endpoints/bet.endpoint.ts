@@ -18,6 +18,18 @@ export class BetEndpoint {
     @FormParam('wager') wager: number,
   ): Promise<MatchBet> {
 
+    if (typeof match_id !== 'number') {
+      throw new Errors.BadRequestError('match_id must be a number');
+    }
+
+    if (typeof prediction !== 'number') {
+      throw new Errors.BadRequestError('prediction must be a number');
+    }
+
+    if (typeof wager !== 'number') {
+      throw new Errors.BadRequestError('wager must be a number');
+    }
+
     return new Promise((resolve, reject) => {
 
       const getCoinsQuery = 'SELECT coins FROM profiles WHERE id=' + session.profile.id;

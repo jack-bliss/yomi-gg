@@ -14,6 +14,14 @@ export class MatchesEndpoint {
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
 
+    if (typeof highlight !== 'number') {
+      throw new Errors.BadRequestError('highlight must be a number');
+    }
+
+    if (typeof exact !== 'boolean') {
+      throw new Errors.BadRequestError('exact must be a boolean');
+    }
+
     return new Promise((resolve, reject) => {
 
       let matchQuery = 'SELECT * FROM matches WHERE highlight';
@@ -45,6 +53,10 @@ export class MatchesEndpoint {
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match> {
 
+    if (typeof id !== 'number') {
+      throw new Errors.BadRequestError('id must be a number');
+    }
+
     return new Promise((resolve, reject) => {
 
       const matchQuery = 'SELECT * FROM matches WHERE id=' + id;
@@ -73,6 +85,14 @@ export class MatchesEndpoint {
     @FormParam('id') id: number,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match> {
+
+    if (typeof highlight !== 'number') {
+      throw new Errors.BadRequestError('highlight must be a number');
+    }
+
+    if (typeof id !== 'number') {
+      throw new Errors.BadRequestError('id must be a number');
+    }
 
     return new Promise((resolve, reject) => {
 

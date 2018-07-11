@@ -5,6 +5,7 @@ import { Profile } from '../models/profile.model';
 import { Token } from '../interfaces/token.interface';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import * as bcrypt from 'bcrypt';
+import * as escape from 'pg-escape';
 
 @Path('/auth')
 export class AuthEndpoint {
@@ -33,15 +34,15 @@ export class AuthEndpoint {
         const query = 'INSERT INTO profiles ' +
           '(username, password, email, verified, coins, type) ' +
           'VALUES(' +
-          '\'' + username + '\', ' +
-          '\'' + hashedPW + '\', ' +
-          '\'' + email + '\', ' +
+          '%L, ' +
+          '%L, ' +
+          '%L, ' +
           'TRUE, ' +
           '5, ' +
-          '\'' + 'member\'' +
+          '\'member\'' +
           ') RETURNING *' ;
 
-        pool.query(query, (err: any, result: { rows: Profile[] }) => {
+        pool.query(escape(query, username, hashedPW, email), (err: any, result: { rows: Profile[] }) => {
           if (err) {
             console.error(err);
             reject(new Errors.InternalServerError('An error occurred.'));
@@ -81,7 +82,9 @@ export class AuthEndpoint {
         throw new Errors.BadRequestError('That password is invalid.');
       }
 
-      pool.query('SELECT * FROM profiles where email=\'' + email +'\'', (err, result) => {
+      const query = 'SELECT * FROM profiles where email=%L';
+
+      pool.query(escape(query, email), (err, result) => {
         if (err) {
           console.error(err);
           reject(new Errors.InternalServerError('An error occurred: ' + JSON.stringify(err)));
@@ -117,14 +120,14 @@ export class AuthEndpoint {
     @QueryParam('email') email: string,
   ): Promise<boolean> {
 
-    const query = 'SELECT id FROM profiles WHERE email=\'' + email + '\'';
+    const query = 'SELECT id FROM profiles WHERE email=%L';
 
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(email)) {
         throw new Errors.BadRequestError('That email is invalid.');
       }
-      pool.query(query, (err, result) => {
+      pool.query(escape(query, email), (err, result) => {
         if (err) {
           console.error(err);
           reject(new Errors.InternalServerError('An error occurred'));
@@ -141,9 +144,9 @@ export class AuthEndpoint {
     @ContextRequest { pool }: RequestExtended,
     @QueryParam('username') username: string,
   ): Promise<boolean> {
-    const query = 'SELECT id FROM profiles WHERE username=\'' + username + '\'';
+    const query = 'SELECT id FROM profiles WHERE username=%L';
     return new Promise((resolve, reject) => {
-      pool.query(query, (err, result) => {
+      pool.query(escape(query, username), (err, result) => {
         if (err) {
           console.error(err);
           reject(new Errors.InternalServerError('An error occurred'));
