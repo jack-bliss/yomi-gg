@@ -4,6 +4,7 @@ import { MatchBet } from '../models/match-bet.model';
 import { MatchBetBreakdown } from '../interfaces/match-bet-breakdown.interface';
 import { MemberPreprocessor } from '../preprocessors/member.preprocessor';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
+import * as escape from 'pg-escape';
 
 @Path('/bet')
 export class BetEndpoint {
@@ -77,12 +78,21 @@ export class BetEndpoint {
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
   ): Promise<MatchBet[]> {
 
+    if (direction !== 'ASC' && direction !== 'DESC') {
+      throw new Errors.BadRequestError('Invalid direction');
+    }
+
     return new Promise((resolve, reject) => {
 
-      const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id +
-        ' ORDER BY ' + order + ' ' + direction;
+      // const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id +
+      //   ' ORDER BY ' + order + ' ' + direction;
 
-      pool.query(getMyBetsQuery, (err, response) => {
+      const getMyBetsQuery = 'SELECT entrant1id, entrant2id, entrant1tag, entrant2tag, prediction, wager, round_name ' +
+        'FROM match_bets, matches ' +
+        'WHERE match_bets.match_id = matches.id AND profile_id = ' + session.profile.id +
+        ' ORDER BY %I ' + direction;
+
+      pool.query(escape(getMyBetsQuery, order), (err, response) => {
         if (err) {
           console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the bets.'));
