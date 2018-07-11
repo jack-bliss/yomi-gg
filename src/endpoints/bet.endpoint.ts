@@ -5,6 +5,7 @@ import { MatchBetBreakdown } from '../interfaces/match-bet-breakdown.interface';
 import { MemberPreprocessor } from '../preprocessors/member.preprocessor';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import * as escape from 'pg-escape';
+import { MatchBetExpanded } from '../models/match-bet-expanded.model';
 
 @Path('/bet')
 export class BetEndpoint {
@@ -88,7 +89,9 @@ export class BetEndpoint {
       //   ' ORDER BY ' + order + ' ' + direction;
 
       const getMyBetsQuery = 'SELECT ' +
-        'entrant1id, entrant2id, entrant1tag, entrant2tag, prediction, wager, round, round_order, event_id, name ' +
+        'prediction, wager, outcome, ' +
+        'entrant1id, entrant2id, entrant1tag, entrant2tag, round, round_order, ' +
+        'name AS tournament ' +
         'FROM match_bets, matches, events ' +
         'WHERE match_bets.match_id = matches.id AND events.id = matches.event_id AND profile_id = ' + session.profile.id +
         ' ORDER BY %I ' + direction;
@@ -98,7 +101,7 @@ export class BetEndpoint {
           console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the bets.'));
         } else {
-          resolve(response.rows.map(b => new MatchBet(b)));
+          resolve(response.rows.map(b => new MatchBetExpanded(b)));
         }
       });
 
