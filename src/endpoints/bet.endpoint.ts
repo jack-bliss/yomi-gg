@@ -77,7 +77,7 @@ export class BetEndpoint {
     @ContextRequest { pool, session }: RequestExtended,
     @QueryParam('order') order: (keyof MatchBet) = 'date',
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
-  ): Promise<MatchBet[]> {
+  ): Promise<MatchBetExpanded[]> {
 
     if (direction !== 'ASC' && direction !== 'DESC') {
       throw new Errors.BadRequestError('Invalid direction');
