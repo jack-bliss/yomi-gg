@@ -77,7 +77,7 @@ export class EventsEndpoint {
         throw new Errors.BadRequestError('id must be a number');
       }
 
-      if (typeof highlight !== 'number') {
+      if (typeof highlight !== 'number' && highlight !== null) {
         throw new Errors.BadRequestError('highlight must be a number');
       }
 

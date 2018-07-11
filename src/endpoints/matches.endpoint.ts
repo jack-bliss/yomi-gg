@@ -14,7 +14,7 @@ export class MatchesEndpoint {
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
 
-    if (typeof highlight !== 'number') {
+    if (typeof highlight !== 'number' && highlight !== null) {
       throw new Errors.BadRequestError('highlight must be a number');
     }
 
