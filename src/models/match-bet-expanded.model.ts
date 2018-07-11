@@ -5,6 +5,7 @@ export class MatchBetExpanded {
   prediction: number;
   wager: number;
   outcome: BetOutcome;
+  winnings: number;
 
   entrant1id: number;
   entrant2id: number;
@@ -29,6 +30,13 @@ export class MatchBetExpanded {
     this.round_order = input.round_order;
 
     this.tournament = input.tournament;
+    if (this.outcome === 'pending') {
+      this.winnings = null;
+    } else if (this.outcome === 'win') {
+      this.winnings = this.wager;
+    } else if (this.outcome === 'loss') {
+      this.winnings = 0;
+    }
 
   }
 
