@@ -83,15 +83,11 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     values.push(nOf(values[0].length, totalBacking));
     values.push(nOf(values[0].length, totalPayout));
-    matchBetUpdates = matchBetUpdates.map(b => {
-      if (b[1] === 'loss') {
-        console.log('==mbu loss==');
-        console.log([b[0], b[1], totalBacking, 0]);
-        return [b[0], b[1], totalBacking, 0];
+
+    matchBetUpdates[1].forEach((outcome, ind) => {
+      if (outcome === 'loss') {
+        values[3][ind] = 0;
       }
-      console.log('==mbu win==');
-      console.log([b[0], b[1], totalBacking, totalPayout]);
-      return [b[0], b[1], totalBacking, totalPayout];
     });
 
     return client.query(updateTempTable, values);
