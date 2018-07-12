@@ -86,7 +86,7 @@ export class BetEndpoint {
     return new Promise((resolve, reject) => {
 
       const getMyBetsQuery = 'SELECT ' +
-        'prediction, wager, outcome, ' +
+        'prediction, wager, outcome, winnings, ' +
         'entrant1id, entrant2id, entrant1tag, entrant2tag, round, round_order, ' +
         'name AS tournament ' +
         'FROM match_bets, matches, events ' +

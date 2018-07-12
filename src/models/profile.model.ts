@@ -17,7 +17,7 @@ export class Profile {
     this.email = input.email;
     this.joined = new Date(input.joined);
     this.verified = Boolean(input.verified);
-    this.coins = input.coins;
+    this.coins = parseFloat(input.coins);
     this.type = input.type;
 
   }

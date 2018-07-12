@@ -33,6 +33,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t create temp table');
     console.error(err);
 
@@ -45,6 +46,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t update match');
     console.error(err);
 
@@ -86,6 +88,11 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     }, nNestedArrays<number>(2));
 
+    if (totalBacking === 0) {
+      client.release();
+      throw new Error('Match is un-backed!');
+    }
+
     profileUpdates.push(nOf(profileUpdates[0].length, totalBacking));
     profileUpdates.push(nOf(profileUpdates[0].length, totalPayout));
 
@@ -97,34 +104,20 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
         matchBetUpdates[3][ind] = 0;
         profileUpdates[3][ind] = 0;
       }
-      console.log('== profile update ==');
-      console.log(
-        'prf id',
-        profileUpdates[0][ind],
-        'wager',
-        profileUpdates[1][ind],
-        'tb',
-        profileUpdates[2][ind],
-        'tp',
-        profileUpdates[3][ind],
-      );
-      console.log('== match bet update ==');
-      console.log(
-        'mb id',
-        matchBetUpdates[0][ind],
-        'outcome',
-        matchBetUpdates[1][ind],
-        'tb',
-        matchBetUpdates[2][ind],
-        'tp',
-        matchBetUpdates[3][ind],
-      );
     });
+
+
+    console.log('== profile updates ==');
+    console.log(profileUpdates[0]);
+    console.log(profileUpdates[1]);
+    console.log(profileUpdates[2]);
+    console.log(profileUpdates[3]);
 
     return client.query(updateTempTable, profileUpdates);
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t select match_bets');
     console.error(err);
 
@@ -140,6 +133,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t insert into temp table');
     console.error(err);
 
@@ -158,6 +152,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t update matches');
     console.error(err);
 
@@ -174,6 +169,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
+    client.release();
     console.error('Couldn\'t update profiles :(');
     console.error(err);
 
@@ -209,6 +205,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     return client.query(updateMatchBetsQuery);
 
   }, err => {
+    client.release();
     console.error('couldnt create temp table');
     console.error(err);
   }).then(() => {
@@ -217,6 +214,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     return Promise.resolve(true);
 
   }, err => {
+    client.release();
     console.error(matchBetUpdates[0], matchBetUpdates[2], matchBetUpdates[3], matchBetUpdates[3]);
     console.error('couldnt update match bets');
     console.error(err);
