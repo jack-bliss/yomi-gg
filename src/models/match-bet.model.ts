@@ -16,7 +16,7 @@ export class MatchBet {
     this.profile_id = input.profile_id;
     this.match_id = input.match_id;
     this.prediction = input.prediction;
-    this.wager = input.wager;
+    this.wager = parseFloat(input.wager);
     this.outcome = input.outcome;
     this.date = input.date;
 

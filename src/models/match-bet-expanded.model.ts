@@ -19,7 +19,7 @@ export class MatchBetExpanded {
   constructor(input: any) {
 
     this.prediction = input.prediction;
-    this.wager = input.wager;
+    this.wager = parseFloat(input.wager);
     this.outcome = input.outcome;
 
     this.entrant1id = input.entrant1id;
