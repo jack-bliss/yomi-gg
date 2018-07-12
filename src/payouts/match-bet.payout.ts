@@ -62,7 +62,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       '$4::int[]' + // total_payout
     '); ';
 
-    const values: number[][] = response.rows.reduce((acc, row: MatchBet) => {
+    const profileUpdates: number[][] = response.rows.reduce((acc, row: MatchBet) => {
 
       matchBetUpdates[0].push(row.id);
 
@@ -78,31 +78,50 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       } else {
         matchBetUpdates[1].push('loss');
         totalPayout += row.wager;
-        return acc;
+        return [
+          [...acc[0], row.profile_id],
+          [...acc[1], 0],
+        ];
       }
 
     }, nNestedArrays<number>(2));
 
-    values.push(nOf(values[0].length, totalBacking));
-    values.push(nOf(values[0].length, totalPayout));
+    profileUpdates.push(nOf(profileUpdates[0].length, totalBacking));
+    profileUpdates.push(nOf(profileUpdates[0].length, totalPayout));
 
-    matchBetUpdates.push(nOf(values[0].length, totalBacking));
-    matchBetUpdates.push(nOf(values[0].length, totalPayout));
+    matchBetUpdates.push(nOf(profileUpdates[0].length, totalBacking));
+    matchBetUpdates.push(nOf(profileUpdates[0].length, totalPayout));
 
     matchBetUpdates[1].forEach((outcome, ind) => {
       if (outcome === 'loss') {
         matchBetUpdates[3][ind] = 0;
+        profileUpdates[3][ind] = 0;
       }
+      console.log('== profile update ==');
+      console.log(
+        'prf id',
+        profileUpdates[0][ind],
+        'wager',
+        profileUpdates[1][ind],
+        'tb',
+        profileUpdates[2][ind],
+        'tp',
+        profileUpdates[3][ind],
+      );
       console.log('== match bet update ==');
       console.log(
+        'mb id',
         matchBetUpdates[0][ind],
+        'outcome',
         matchBetUpdates[1][ind],
+        'tb',
         matchBetUpdates[2][ind],
+        'tp',
         matchBetUpdates[3][ind],
       );
     });
 
-    return client.query(updateTempTable, values);
+    return client.query(updateTempTable, profileUpdates);
 
   }, err => {
 
