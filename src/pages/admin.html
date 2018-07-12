@@ -7,6 +7,9 @@
         .highlighted {
             background-color: aqua;
         }
+        .streamed {
+            background-color: orange;
+        }
         #match_container div {
             padding: 10px;
             border-bottom: 1px solid aliceblue;
@@ -51,110 +54,143 @@
 
 $(() => {
 
-    let allEvents = [];
+  let allEvents = [];
+  const $mc = $("#match_container");
+  const $tl = $("#tournament_list");
 
-    function listMatches(id) {
-      const $mc = $("#match_container");
-      const $tl = $("#tournament_list");
-      $mc.html('');
-      $.ajax({
-        url: '/events/' + id + '/matches?direction=DESC',
-        dataType: 'JSON',
-        success: (matches) => {
+  function listMatches(id) {
+    $mc.html('');
+    $.ajax({
+      url: '/events/' + id + '/matches?direction=DESC',
+      dataType: 'JSON',
+      success: (matches) => {
 
+        $mc.append(
+          $("<div />")
+            .append(
+              $("<h2 />").text(allEvents[$tl[0].selectedIndex].name)
+            )
+            .append(
+              $("<button />").text('update').attr('data-id', id).addClass('update')
+            )
+            .append(
+              $("<button />").text('in progress').attr('data-id', id).addClass('inprogress')
+            )
+            .append(
+              $("<button />").text('complete').attr('data-id', id).addClass('complete')
+            )
+        );
+
+        matches.forEach(m => {
           $mc.append(
             $("<div />")
+              .addClass(() => m.highlight > 0 ? 'highlighted' : null)
               .append(
-                $("<h2 />").text(allEvents[$tl[0].selectedIndex].name)
+                $("<span />")
+                  .append(m.round + ': ' + m.entrant1tag + ' v ' + m.entrant2tag)
               )
               .append(
-                $("<button />").text('update').attr('data-id', id).addClass('update')
+                $("<button />")
+                  .text('Highlight')
+                  .attr('data-id', m.id)
+                  .addClass('highlight')
               )
-          );
-
-          matches.forEach(m => {
-            $mc.append(
-              $("<div />")
-                .addClass(() => m.highlight > 0 ? 'highlighted' : null)
-                .append(
-                  $("<span />")
-                    .append(m.round + ': ' + m.entrant1tag + ' v ' + m.entrant2tag)
-                )
-                .append(
-                  $("<button />")
-                    .text('Highlight')
-                    .attr('data-id', m.id)
-                    .addClass('highlight')
-                )
-                .append(
-                  $("<button />")
-                    .text('Pay Out')
-                    .attr('data-id', m.id)
-                    .addClass('payout')
-                )
-            );
-          });
-        }
-      })
-    }
-
-    $.ajax({
-      url: '/events',
-      dataType: 'JSON',
-      success: (events) => {
-        allEvents = events;
-        events.forEach(e => {
-          $("#tournament_list").append(
-            $("<option />").val(e.id).text(e.name)
+              .append(
+                $("<button />")
+                  .text('Stream')
+                  .attr('data-id', m.id)
+                  .addClass('stream')
+              )
+              .append(
+                $("<button />")
+                  .text('Pay Out')
+                  .attr('data-id', m.id)
+                  .addClass('payout')
+              )
           );
         });
       }
-    });
+    })
+  }
 
-    $("#get_matches").submit(e => {
-      e.preventDefault();
-      const id = $("#tournament_list").val();
-      listMatches(id);
-    });
+  $.ajax({
+    url: '/events',
+    dataType: 'JSON',
+    success: (events) => {
+      allEvents = events;
+      events.forEach(e => {
+        $tl.append(
+          $("<option />").val(e.id).text(e.name)
+        );
+      });
+    }
+  });
 
-    $("#match_container").on('click', '.highlight', e => {
-      const $clicked = $(e.target);
-      const $row = $clicked.parent();
-      $.ajax({
-        url: '/matches/highlight/',
-        method: 'post',
-        data: {
-          id: $clicked.attr('data-id'),
-          highlight: $row.hasClass('highlighted') ? 0 : 1,
-        },
-        dataType: 'JSON',
-        success: (match) => {
-          if (match.highlight === 0) {
-            $row.removeClass('highlighted');
-          } else {
-            $row.addClass('highlighted');
-          }
+  $("#get_matches").submit(e => {
+    e.preventDefault();
+    const id = $("#tournament_list").val();
+    listMatches(id);
+  });
+
+  $mc.on('click', '.highlight', e => {
+    const $clicked = $(e.target);
+    const $row = $clicked.parent();
+    $.ajax({
+      url: '/matches/highlight/',
+      method: 'post',
+      data: {
+        id: $clicked.attr('data-id'),
+        highlight: $row.hasClass('highlighted') ? 0 : 1,
+      },
+      dataType: 'JSON',
+      success: (match) => {
+        $row.removeClass('streamed');
+        $row.removeClass('highlighted');
+        if (match.highlight === 1) {
+          $row.addClass('highlighted');
         }
-      })
-    });
+      }
+    })
+  });
 
-    $("#match_container").on('click', '.update', e => {
-      const $clicked = $(e.target);
-      const id = $clicked.attr('data-id');
-      $.ajax({
-        url: '/smashgg/update-event/',
-        method: 'post',
-        data: {
-          id: id,
-        },
-        dataType: 'JSON',
-        success: (match) => {
-          listMatches(id);
+  $mc.on('click', '.stream', e => {
+    const $clicked = $(e.target);
+    const $row = $clicked.parent();
+    $.ajax({
+      url: '/matches/highlight/',
+      method: 'post',
+      data: {
+        id: $clicked.attr('data-id'),
+        highlight: $row.hasClass('streamed') ? 0 : 2,
+      },
+      dataType: 'JSON',
+      success: (match) => {
+        $row.removeClass('highlighted');
+        $row.removeClass('streamed');
+        if (match.highlight === 2) {
+          $row.addClass('streamed');
         }
-      })
-    });
+      }
+    })
+  });
 
-  $("#match_container").on('click', '.payout', e => {
+  $mc.on('click', '.update', e => {
+    const $clicked = $(e.target);
+    const id = $clicked.attr('data-id');
+    $.ajax({
+      url: '/smashgg/update-event/',
+      method: 'post',
+      data: {
+        id: id,
+      },
+      dataType: 'JSON',
+      success: (match) => {
+        listMatches(id);
+      }
+    })
+  });
+
+  $mc.on('click', '.payout', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -162,6 +198,38 @@ $(() => {
       method: 'post',
       data: {
         id: id,
+      },
+      dataType: 'JSON',
+      success: () => {
+        console.log('done!')
+      }
+    })
+  });
+
+  $mc.on('click', '.inprogress', e => {
+    const $clicked = $(e.target);
+    const id = $clicked.attr('data-id');
+    $.ajax({
+      url: '/events/' + id,
+      method: 'patch',
+      data: {
+        state: 'in progress',
+      },
+      dataType: 'JSON',
+      success: () => {
+        console.log('done!');
+      }
+    })
+  });
+
+  $mc.on('click', '.complete', e => {
+    const $clicked = $(e.target);
+    const id = $clicked.attr('data-id');
+    $.ajax({
+      url: '/events/' + id,
+      method: 'patch',
+      data: {
+        state: 'complete',
       },
       dataType: 'JSON',
       success: () => {

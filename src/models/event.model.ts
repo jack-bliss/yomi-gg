@@ -1,3 +1,5 @@
+import { State } from '../types/state.type';
+
 export class Event {
 
   id: number;
@@ -6,7 +8,7 @@ export class Event {
   slug: string;
   image: string;
   starting: string;
-  state: 'pending' | 'in progress' | 'finished';
+  state: State;
 
   constructor(input: any) {
 

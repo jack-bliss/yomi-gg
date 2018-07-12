@@ -1,8 +1,10 @@
-import { Path, GET, ContextRequest, Errors, PathParam, QueryParam } from 'typescript-rest';
+import { Path, GET, ContextRequest, Errors, PathParam, QueryParam, PATCH, Preprocessor, FormParam } from 'typescript-rest';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { Event } from '../models/event.model';
 import { Match } from '../models/match.model';
 import * as escape from 'pg-escape';
+import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
+import { StateValidator } from '../validators/event-state.validator';
 
 @Path('/events')
 export class EventsEndpoint {
@@ -58,6 +60,29 @@ export class EventsEndpoint {
       });
 
     });
+
+  }
+
+  @Path('/:id')
+  @PATCH
+  @Preprocessor(AdminPreprocessor)
+  updateEvent(
+    @ContextRequest { pool }: RequestExtended,
+    @PathParam('id') id: number,
+    @FormParam('state') state: string,
+  ): Promise<Event> {
+
+    if (typeof id !== 'number') {
+      throw new Errors.BadRequestError('id must be a number');
+    }
+    if (!StateValidator(state)) {
+      throw new Errors.BadRequestError('state is invalid');
+    }
+
+    const updateQuery = 'UPDATE events SET state=%L WHERE id=' + id + ' RETURNING *';
+    return pool.query(escape(updateQuery, state)).then(r => {
+      return new Event(r.rows[0]);
+    })
 
   }
 

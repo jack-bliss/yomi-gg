@@ -85,9 +85,6 @@ export class BetEndpoint {
 
     return new Promise((resolve, reject) => {
 
-      // const getMyBetsQuery = 'SELECT * FROM match_bets WHERE profile_id=' + session.profile.id +
-      //   ' ORDER BY ' + order + ' ' + direction;
-
       const getMyBetsQuery = 'SELECT ' +
         'prediction, wager, outcome, ' +
         'entrant1id, entrant2id, entrant1tag, entrant2tag, round, round_order, ' +
@@ -109,7 +106,7 @@ export class BetEndpoint {
 
   }
 
-  @Path('/match/:match_id')
+  @Path('/match/breakdown/:match_id')
   @GET
   @Preprocessor(AdminPreprocessor)
   getBetsOnMatch(

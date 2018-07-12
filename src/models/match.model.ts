@@ -1,8 +1,10 @@
+import { State } from '../types/state.type';
+
 export class Match {
   id: number;
   entrant1id: number;
   entrant2id: number;
-  state: string;
+  state: State;
   winner: number;
   entrant1score: number;
   entrant2score: number;
