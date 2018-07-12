@@ -69,6 +69,8 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       if (row.prediction === match.winner) {
         matchBetUpdates[1].push('win');
         totalBacking += row.wager;
+        console.log('== profile won with wager ==');
+        console.log(row.profile_id, row.wager);
         return [
           [...acc[0], row.profile_id],
           [...acc[1], row.wager],
@@ -84,10 +86,20 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     values.push(nOf(values[0].length, totalBacking));
     values.push(nOf(values[0].length, totalPayout));
 
+    matchBetUpdates.push(nOf(values[0].length, totalBacking));
+    matchBetUpdates.push(nOf(values[0].length, totalPayout));
+
     matchBetUpdates[1].forEach((outcome, ind) => {
       if (outcome === 'loss') {
-        values[3][ind] = 0;
+        matchBetUpdates[3][ind] = 0;
       }
+      console.log('== match bet update ==');
+      console.log(
+        matchBetUpdates[0][ind],
+        matchBetUpdates[1][ind],
+        matchBetUpdates[2][ind],
+        matchBetUpdates[3][ind],
+      );
     });
 
     return client.query(updateTempTable, values);
@@ -148,7 +160,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then (() => {
 
-    console.log('==match bet updates');
+    console.log('== match bet updates ==');
     console.log(matchBetUpdates[0]);
     console.log(matchBetUpdates[1]);
     console.log(matchBetUpdates[2]);
