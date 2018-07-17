@@ -122,13 +122,16 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
       console.error('couldnt update temp table');
       console.error(err);
     }).then(() => {
-      client.release();
-      return pool.query('DROP TABLE IF EXISTS match_updates');
+      return client.query('DROP TABLE IF EXISTS match_updates');
     }, err => {
       console.error('couldnt update main table :(');
       console.error(err);
     }).then(() => {
+      console.log('releasing client');
+      client.release();
       return;
+    }, err => {
+      client.release();
     })
 
   });
