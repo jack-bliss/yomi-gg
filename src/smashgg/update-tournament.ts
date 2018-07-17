@@ -123,10 +123,12 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
       console.error(err);
     }).then(() => {
       client.release();
-      return Promise.resolve();
+      return pool.query('DROP TABLE IF EXISTS match_updates');
     }, err => {
       console.error('couldnt update main table :(');
       console.error(err);
+    }).then(() => {
+      return;
     })
 
   });
