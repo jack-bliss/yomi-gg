@@ -109,7 +109,9 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
         'winner = match_updates.winner, ' +
         'entrant1Score = match_updates.entrant1Score, ' +
         'entrant2Score = match_updates.entrant2Score, ' +
-        'state = ' +  + ', ' +
+        'state = (CASE ' +
+          'WHEN match_updates.winner = NULL THEN \'pending\' ' +
+          'WHEN match_updates.winner != NULL THEN \'complete\') ' +
         'FROM match_updates WHERE matches.identifier = match_updates.identifier AND matches.event_id=' + id;
 
       return client.query(updateQuery);
