@@ -76,9 +76,6 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
 
       const setData: (number | string)[][] = sets.reduce((acc: (number | string)[][], set) => {
 
-        console.log('==storing temp set data==');
-        console.log(set.id, set.identifier, set.entrant1Id, set.entrant2Id);
-
         return [
           [...acc[0], set.id,],
           [...acc[1], set.identifier],
@@ -113,8 +110,6 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
           'WHEN match_updates.winner = NULL THEN \'pending\' ' +
           'ELSE \'complete\' END) ' +
         'FROM match_updates WHERE matches.identifier = match_updates.identifier AND matches.event_id=' + id;
-
-      console.log(updateQuery);
 
       return client.query(updateQuery);
 
