@@ -19,6 +19,7 @@ import { MatchesEndpoint } from './src/endpoints/matches.endpoint';
 import { PayoutEndpoint } from './src/endpoints/payout.endpoint';
 import Timer = NodeJS.Timer;
 import { CheckTournaments } from './src/periodics/check-tournaments.periodic';
+import { UpdateTournament } from './src/smashgg/update-tournament';
 
 const app: express.Application = express();
 
@@ -79,7 +80,6 @@ app.get('/place-a-bet', (req: RequestExtended, res: Response) => {
 app.get('/admin', (req: RequestExtended, res: Response) => {
 
   try {
-    console.log(req.session.profile);
     AdminPreprocessor(req);
   } catch(e) {
     res.redirect('/');
@@ -92,8 +92,22 @@ app.get('/admin', (req: RequestExtended, res: Response) => {
 
 const TournamentUpdateInterval: Timer = setInterval(() => {
 
-  CheckTournaments(pool).then(e => {
-    e.forEach(console.log);
+  CheckTournaments(pool).then(events => {
+
+    console.log('Updating', events.map(e => e.name).join(', '));
+
+    const promiseFactories: (() => Promise<void>)[] = events.map(event => {
+      return () => UpdateTournament(event.id, pool);
+    });
+
+    const fullChain = promiseFactories.reduce((chain, next) => {
+      return chain.then(next);
+    }, Promise.resolve());
+
+    fullChain.then(() => {
+      console.log('Updated events');
+    });
+
   });
 
 }, 10 * 1000);
