@@ -10,13 +10,15 @@ import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 import { join } from 'path';
 import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
 import { readFile } from 'fs';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
 import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
 import { AdminPreprocessor } from './src/preprocessors/admin.preprocessor';
 import { EventsEndpoint } from './src/endpoints/events.endpoint';
 import { MatchesEndpoint } from './src/endpoints/matches.endpoint';
 import { PayoutEndpoint } from './src/endpoints/payout.endpoint';
+import Timer = NodeJS.Timer;
+import { CheckTournaments } from './src/periodics/check-tournaments.periodic';
 
 const app: express.Application = express();
 
@@ -88,7 +90,13 @@ app.get('/admin', (req: RequestExtended, res: Response) => {
 
 });
 
-app.get('/');
+const TournamentUpdateInterval: Timer = setInterval(() => {
+
+  CheckTournaments(pool).then(e => {
+    e.forEach(console.log);
+  });
+
+}, 10 * 1000);
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);
