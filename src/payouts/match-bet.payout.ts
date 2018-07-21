@@ -33,7 +33,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t create temp table');
     console.error(err);
 
@@ -46,7 +46,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t update match');
     console.error(err);
 
@@ -57,12 +57,12 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       'coins, ' +
       'total_backing, ' +
       'total_payout' +
-    ') SELECT * FROM UNNEST (' +
+      ') SELECT * FROM UNNEST (' +
       '$1::int[], ' + // profile id
       '$2::int[], ' + // coins
       '$3::int[], ' + // total_backing
       '$4::int[]' + // total_payout
-    '); ';
+      '); ';
 
     const profileUpdates: number[][] = response.rows.reduce((acc, row: MatchBet) => {
 
@@ -76,7 +76,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
         return [
           [...acc[0], row.profile_id],
           [...acc[1], row.wager],
-        ]
+        ];
       } else {
         matchBetUpdates[1].push('loss');
         totalPayout += row.wager;
@@ -89,7 +89,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     }, nNestedArrays<number>(2));
 
     if (totalBacking === 0) {
-      client.release();
+
       throw new Error('Match is un-backed!');
     }
 
@@ -117,7 +117,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t select match_bets');
     console.error(err);
 
@@ -133,7 +133,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t insert into temp table');
     console.error(err);
 
@@ -152,7 +152,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t update matches');
     console.error(err);
 
@@ -163,17 +163,17 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       'outcome VARCHAR(15), ' +
       'total_backing REAL, ' +
       'total_payout REAL' +
-    ');';
+      ');';
 
     return client.query(tempTableQuery2);
 
   }, err => {
 
-    client.release();
+
     console.error('Couldn\'t update profiles :(');
     console.error(err);
 
-  }).then (() => {
+  }).then(() => {
 
     console.log('== match bet updates ==');
     console.log(matchBetUpdates[0]);
@@ -186,12 +186,12 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       'outcome, ' +
       'total_backing, ' +
       'total_payout' +
-    ') SELECT * FROM UNNEST (' +
+      ') SELECT * FROM UNNEST (' +
       '$1::int[], ' +
       '$2::text[], ' +
       '$3::float[], ' +
       '$4::float[]' +
-    ')';
+      ')';
 
     return client.query(updateTempTableBets, matchBetUpdates);
 
@@ -205,19 +205,28 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     return client.query(updateMatchBetsQuery);
 
   }, err => {
-    client.release();
+
     console.error('couldnt create temp table');
     console.error(err);
+  }).then(() => {
+
+    return client.query('DROP TABLE profile_updates, bet_updates');
+
+  }, err => {
+
+    console.error(matchBetUpdates[0], matchBetUpdates[2], matchBetUpdates[3], matchBetUpdates[3]);
+    console.error('couldnt update match bets');
+    console.error(err);
+
   }).then(() => {
 
     client.release();
     return Promise.resolve(true);
 
   }, err => {
+
     client.release();
-    console.error(matchBetUpdates[0], matchBetUpdates[2], matchBetUpdates[3], matchBetUpdates[3]);
-    console.error('couldnt update match bets');
-    console.error(err);
+    console.error('couldnt clear temp tables');
   });
 
 };
