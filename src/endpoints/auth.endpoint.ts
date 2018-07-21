@@ -32,13 +32,12 @@ export class AuthEndpoint {
       bcrypt.hash(password, 10).then((hashedPW: string) => {
 
         const query = 'INSERT INTO profiles ' +
-          '(username, password, email, verified, coins, type) ' +
+          '(username, password, email, verified, type) ' +
           'VALUES(' +
           '%L, ' +
           '%L, ' +
           '%L, ' +
           'TRUE, ' +
-          '5, ' +
           '\'member\'' +
           ') RETURNING *' ;
 

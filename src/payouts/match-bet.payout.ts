@@ -64,29 +64,31 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       '$4::int[]' + // total_payout
       '); ';
 
-    const profileUpdates: number[][] = response.rows.reduce((acc, row: MatchBet) => {
+    const profileUpdates: number[][] = response.rows
+      .map(row => new MatchBet(row))
+      .reduce((acc, row: MatchBet) => {
 
-      matchBetUpdates[0].push(row.id);
+        matchBetUpdates[0].push(row.id);
 
-      if (row.prediction === match.winner) {
-        matchBetUpdates[1].push('win');
-        totalBacking += row.wager;
-        console.log('== profile won with wager ==');
-        console.log(row.profile_id, row.wager);
-        return [
-          [...acc[0], row.profile_id],
-          [...acc[1], row.wager],
-        ];
-      } else {
-        matchBetUpdates[1].push('loss');
-        totalPayout += row.wager;
-        return [
-          [...acc[0], row.profile_id],
-          [...acc[1], 0],
-        ];
-      }
+        if (row.prediction === match.winner) {
+          matchBetUpdates[1].push('win');
+          totalBacking += row.wager;
+          console.log('== profile won with wager ==');
+          console.log(row.profile_id, row.wager);
+          return [
+            [...acc[0], row.profile_id],
+            [...acc[1], row.wager],
+          ];
+        } else {
+          matchBetUpdates[1].push('loss');
+          totalPayout += row.wager;
+          return [
+            [...acc[0], row.profile_id],
+            [...acc[1], 0],
+          ];
+        }
 
-    }, nNestedArrays<number>(2));
+      }, nNestedArrays<number>(2));
 
     if (totalBacking === 0) {
 
