@@ -113,15 +113,7 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
           console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
         }
         return queuePromiseFactories(matches.map(m =>  {
-          return () => {
-            let p: Promise<any>;
-            try {
-              p = MatchBetPayout(m.id, pool);
-            } catch(e) {
-              return Promise.resolve();
-            }
-            return p;
-          }
+          return () => MatchBetPayout(m.id, pool);
         }));
       });
 

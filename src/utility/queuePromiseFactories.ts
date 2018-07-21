@@ -6,6 +6,6 @@ export const queuePromiseFactories = <T>(factories: (() => Promise<T>)[]): Promi
   }
   const first = factories.shift();
   return factories.reduce((chain: Promise<T>, next) => {
-    return chain.then(next);
+    return chain.then(next, next);
   }, first());
 };
