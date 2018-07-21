@@ -6,6 +6,8 @@ import { MemberPreprocessor } from '../preprocessors/member.preprocessor';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import * as escape from 'pg-escape';
 import { MatchBetExpanded } from '../models/match-bet-expanded.model';
+import { QueryResult } from 'pg';
+import { Match } from '../models/match.model';
 
 @Path('/bet')
 export class BetEndpoint {
@@ -31,41 +33,45 @@ export class BetEndpoint {
     if (typeof wager !== 'number') {
       throw new Errors.BadRequestError('wager must be a number');
     }
+    let newCoins: number;
 
-    return new Promise((resolve, reject) => {
+    const checkMatchQuery = 'SELECT * FROM matches WHERE id=' + match_id;
+    return pool.query(checkMatchQuery).then((response) => {
+
+      const match: Match = new Match(response.rows[0]);
+
+      if (match.state !== 'pending') {
+        throw new Errors.BadRequestError('You can\'t bet on that match');
+      }
 
       const getCoinsQuery = 'SELECT coins FROM profiles WHERE id=' + session.profile.id;
+      return pool.query(getCoinsQuery).then((response: { rows: { coins: number }[] }) => {
 
-      pool.query(getCoinsQuery, (err, coins: { rows: { coins: number }[] }) => {
-        if (err) {
-          console.error(err);
-          reject(new Error('Something went wrong checking how many coins you have.'));
-        }
-        const myCoins = coins.rows[0].coins;
+        const myCoins = response.rows[0].coins;
         if (myCoins < wager) {
-          reject(new Errors.BadRequestError('You don\'t have enough coins for that.'));
-        } else {
-          const newCoins = myCoins - wager;
-          const createBetQuery =
-            'UPDATE profiles SET coins=' + newCoins + ' WHERE id=' + session.profile.id + '; ' +
-            'INSERT INTO match_bets (profile_id, match_id, prediction, wager) VALUES(' +
-            session.profile.id + ', ' +
-            match_id + ', ' +
-            prediction + ', ' +
-            wager +
-            ') RETURNING *';
-          pool.query(createBetQuery, (err, updated: any) => {
-            if (err) {
-              console.error(err);
-              reject(new Error('Something went wrong creating the bet.'));
-            } else {
-              session.profile.coins = newCoins;
-              resolve(new MatchBet(updated[1].rows[0]));
-            }
-          });
-
+          throw new Errors.BadRequestError('You don\'t have enough coins for that.');
         }
-      })
+        newCoins = myCoins - wager;
+        const createBetQuery =
+          'UPDATE profiles SET coins=' + newCoins + ' WHERE id=' + session.profile.id + '; ' +
+          'INSERT INTO match_bets (profile_id, match_id, prediction, wager) VALUES(' +
+          session.profile.id + ', ' +
+          match_id + ', ' +
+          prediction + ', ' +
+          wager +
+          ') RETURNING *';
+        return pool.query(createBetQuery);
+      }, err => {
+        console.error(err);
+        throw new Error('Something went wrong checking how many coins you have.');
+      }).then((updated: any) => {
+        session.profile.coins = newCoins;
+        return new MatchBet(updated[1].rows[0]);
+      }, err => {
+        console.error(err);
+        throw new Error('Something went wrong creating the bet.');
+      });
+
     });
 
   }
@@ -86,7 +92,7 @@ export class BetEndpoint {
     return new Promise((resolve, reject) => {
 
       const getMyBetsQuery = 'SELECT ' +
-        'prediction, wager, outcome, winnings, ' +
+        'prediction, wager, outcome, ' +
         'entrant1id, entrant2id, entrant1tag, entrant2tag, round, round_order, ' +
         'name AS tournament ' +
         'FROM match_bets, matches, events ' +

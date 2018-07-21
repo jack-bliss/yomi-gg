@@ -10,12 +10,18 @@
         .streamed {
             background-color: orange;
         }
-        #match_container div {
+        .in-progress {
+            border: 1px solid lime;
+        }
+        .complete {
+            border: 1px solid crimson;
+        }
+        #outlet div {
             padding: 10px;
             border-bottom: 1px solid aliceblue;
             font-family: Helvetica, Arial, sans-serif;
         }
-        #match_container div span {
+        #outlet div span {
             display: inline-block;
             margin-right: 10px;
         }
@@ -79,17 +85,20 @@ $(() => {
               $("<button />").text('update').attr('data-id', id).addClass('update')
             )
             .append(
-              $("<button />").text('in progress').attr('data-id', id).addClass('inprogress')
+              $("<button />").text('in progress').attr('data-id', id).addClass('event-progress')
             )
             .append(
-              $("<button />").text('complete').attr('data-id', id).addClass('complete')
+              $("<button />").text('complete').attr('data-id', id).addClass('event-complete')
             )
         );
 
         matches.forEach(m => {
           $o.append(
             $("<div />")
-              .addClass(() => m.highlight > 0 ? 'highlighted' : null)
+              .addClass(() => m.highlight === 1 ? 'highlighted' : null)
+              .addClass(() => m.highlight === 2 ? 'streamed' : null)
+              .addClass(() => m.state === 'in progress' ? 'in-progress' : null)
+              .addClass(() => m.state === 'complete' ? 'complete' : null)
               .append(
                 $("<span />")
                   .append(m.round + ': ' + m.entrant1tag + ' v ' + m.entrant2tag)
@@ -108,9 +117,9 @@ $(() => {
               )
               .append(
                 $("<button />")
-                  .text('Pay Out')
+                  .text('In Progress')
                   .attr('data-id', m.id)
-                  .addClass('payout')
+                  .addClass('match-progress')
               )
           );
         });
@@ -237,7 +246,7 @@ $(() => {
     })
   });
 
-  $o.on('click', '.inprogress', e => {
+  $o.on('click', '.event-progress', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -253,7 +262,7 @@ $(() => {
     })
   });
 
-  $o.on('click', '.complete', e => {
+  $o.on('click', '.event-complete', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -268,6 +277,22 @@ $(() => {
       }
     })
   });
+
+  $o.on('click', '.match-progress', e => {
+    const $clicked = $(e.target);
+    const id = $clicked.attr('data-id');
+    $.ajax({
+      url: '/events/' + id,
+      method: 'patch',
+      data: {
+        state: 'in progress',
+      },
+      dataType: 'JSON',
+      success: () => {
+        $clicked.parent().addClass('in-progress');
+      }
+    })
+  })
 
 
 
