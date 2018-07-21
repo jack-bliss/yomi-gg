@@ -98,35 +98,20 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 
   CheckTournaments(pool).then(events => {
 
-    console.log('Updating', events.map(e => e.name).join(', '));
-
     queuePromiseFactories(events.map(e => {
       return () => UpdateTournament(e.id, pool);
     }))
       .then(() => {
-        console.log('updated events');
         return CheckMatches(pool);
       })
       .then((matches: Match[]) => {
-        console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
+        if (matches.length) {
+          console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
+        }
         return queuePromiseFactories(matches.map(m =>  {
           return () => MatchBetPayout(m.id, pool);
         }));
-      }).then(() => {
-        console.log('payed out matches');
       });
-
-    // const promiseFactories: (() => Promise<void>)[] = events.map(event => {
-    //   return () => UpdateTournament(event.id, pool);
-    // });
-    //
-    // const fullChain = promiseFactories.reduce((chain, next) => {
-    //   return chain.then(next);
-    // }, Promise.resolve());
-    //
-    // fullChain.then(() => {
-    //   console.log('Updated events');
-    // });
 
   });
 
