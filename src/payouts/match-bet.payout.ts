@@ -58,9 +58,9 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
       'total_payout' +
       ') SELECT * FROM UNNEST (' +
       '$1::int[], ' + // profile id
-      '$2::int[], ' + // coins
-      '$3::int[], ' + // total_backing
-      '$4::int[]' + // total_payout
+      '$2::real[], ' + // coins
+      '$3::real[], ' + // total_backing
+      '$4::real[]' + // total_payout
       '); ';
 
     const profileUpdates: number[][] = response.rows
