@@ -4,7 +4,7 @@ import { Event } from '../models/event.model';
 import { Match } from '../models/match.model';
 import * as escape from 'pg-escape';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
-import { StateValidator } from '../validators/event-state.validator';
+import { StateValidator } from '../validators/state.validator';
 
 @Path('/events')
 export class EventsEndpoint {
@@ -94,6 +94,7 @@ export class EventsEndpoint {
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
     @QueryParam('highlight') highlight: number = null,
     @QueryParam('exact') exact: boolean = false,
+    @QueryParam('state') state: 'pending' | 'complete' = null,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
@@ -114,9 +115,16 @@ export class EventsEndpoint {
         throw new Errors.BadRequestError('direction is invalid');
       }
 
+      if (!StateValidator(state) && state !== null) {
+        throw new Errors.BadRequestError('invalid state param');
+      }
+
       let matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' ';
       if (highlight !== null) {
-        matchQuery += 'AND highlight ' + (exact ? '' : '>') + '=' + highlight + ' ';
+        matchQuery += 'AND highlight ' + (exact ? '' : '>') + '= ' + highlight + ' ';
+      }
+      if (state !== null) {
+        matchQuery += 'AND state = ' + state + ' ';
       }
       matchQuery += 'ORDER BY %I ' + direction;
       pool.query(escape(matchQuery, order), (err, response) => {

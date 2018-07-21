@@ -20,6 +20,10 @@ import { PayoutEndpoint } from './src/endpoints/payout.endpoint';
 import Timer = NodeJS.Timer;
 import { CheckTournaments } from './src/periodics/check-tournaments.periodic';
 import { UpdateTournament } from './src/smashgg/update-tournament';
+import { queuePromises } from './src/utility/queuePromises';
+import { CheckMatches } from './src/periodics/check-matches.periodic';
+import { Match } from './src/models/match.model';
+import { MatchBetPayout } from './src/payouts/match-bet.payout';
 
 const app: express.Application = express();
 
@@ -96,17 +100,29 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 
     console.log('Updating', events.map(e => e.name).join(', '));
 
-    const promiseFactories: (() => Promise<void>)[] = events.map(event => {
-      return () => UpdateTournament(event.id, pool);
-    });
+    queuePromises(events.map(e => UpdateTournament(e.id, pool)))
+      .then(() => {
+        consoe.log('updated events');
+        return CheckMatches(pool);
+      })
+      .then((matches: Match[]) => {
+        console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
+        return queuePromises(matches.map(m => MatchBetPayout(m.id, pool)));
+      }).then(() => {
+        console.log('payed out matches');
+      });
 
-    const fullChain = promiseFactories.reduce((chain, next) => {
-      return chain.then(next);
-    }, Promise.resolve());
-
-    fullChain.then(() => {
-      console.log('Updated events');
-    });
+    // const promiseFactories: (() => Promise<void>)[] = events.map(event => {
+    //   return () => UpdateTournament(event.id, pool);
+    // });
+    //
+    // const fullChain = promiseFactories.reduce((chain, next) => {
+    //   return chain.then(next);
+    // }, Promise.resolve());
+    //
+    // fullChain.then(() => {
+    //   console.log('Updated events');
+    // });
 
   });
 
