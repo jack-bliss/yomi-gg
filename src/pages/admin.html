@@ -41,7 +41,12 @@
 
 </form>
 
-<div id="match_container">
+<div id="high_scores">
+    <button id="total_coins">Total Coins</button>
+    <button id="highest_payout">Highest Payout</button>
+</div>
+
+<div id="outlet">
 
 </div>
 
@@ -55,17 +60,17 @@
 $(() => {
 
   let allEvents = [];
-  const $mc = $("#match_container");
+  const $o = $("#outlet");
   const $tl = $("#tournament_list");
 
   function listMatches(id) {
-    $mc.html('');
+    $o.html('');
     $.ajax({
       url: '/events/' + id + '/matches?direction=DESC',
       dataType: 'JSON',
       success: (matches) => {
 
-        $mc.append(
+        $o.append(
           $("<div />")
             .append(
               $("<h2 />").text(allEvents[$tl[0].selectedIndex].name)
@@ -82,7 +87,7 @@ $(() => {
         );
 
         matches.forEach(m => {
-          $mc.append(
+          $o.append(
             $("<div />")
               .addClass(() => m.highlight > 0 ? 'highlighted' : null)
               .append(
@@ -132,7 +137,33 @@ $(() => {
     listMatches(id);
   });
 
-  $mc.on('click', '.highlight', e => {
+  $("#total_coins").click(() => {
+    $o.html('');
+    $.ajax({
+      url: '/profiles/highest/total',
+      dataType: 'JSON',
+      success: (profiles) => {
+        profiles.forEach(p => {
+          $o.append($("<p />").html(p.username + ': ' + p.coins));
+        });
+      },
+    });
+  });
+
+  $("#highest_payout").click(() => {
+    $o.html('');
+    $.ajax({
+      url: '/profiles/highest/payout',
+      dataType: 'JSON',
+      success: (payouts) => {
+        payouts.forEach(p => {
+          $o.append($("<p />").html(p.username + ': ' + p.bet.winnings + ' won from ' + p.bet.wager));
+        })
+      }
+    })
+  });
+
+  $o.on('click', '.highlight', e => {
     const $clicked = $(e.target);
     const $row = $clicked.parent();
     $.ajax({
@@ -153,7 +184,7 @@ $(() => {
     })
   });
 
-  $mc.on('click', '.stream', e => {
+  $o.on('click', '.stream', e => {
     const $clicked = $(e.target);
     const $row = $clicked.parent();
     $.ajax({
@@ -174,7 +205,7 @@ $(() => {
     })
   });
 
-  $mc.on('click', '.update', e => {
+  $o.on('click', '.update', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -190,7 +221,7 @@ $(() => {
     })
   });
 
-  $mc.on('click', '.payout', e => {
+  $o.on('click', '.payout', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -206,7 +237,7 @@ $(() => {
     })
   });
 
-  $mc.on('click', '.inprogress', e => {
+  $o.on('click', '.inprogress', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
@@ -222,7 +253,7 @@ $(() => {
     })
   });
 
-  $mc.on('click', '.complete', e => {
+  $o.on('click', '.complete', e => {
     const $clicked = $(e.target);
     const id = $clicked.attr('data-id');
     $.ajax({
