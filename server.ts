@@ -20,7 +20,7 @@ import { PayoutEndpoint } from './src/endpoints/payout.endpoint';
 import Timer = NodeJS.Timer;
 import { CheckTournaments } from './src/periodics/check-tournaments.periodic';
 import { UpdateTournament } from './src/smashgg/update-tournament';
-import { queuePromiseFactories } from './src/utility/queuePromises';
+import { queuePromiseFactories } from './src/utility/queuePromiseFactories';
 import { CheckMatches } from './src/periodics/check-matches.periodic';
 import { Match } from './src/models/match.model';
 import { MatchBetPayout } from './src/payouts/match-bet.payout';
