@@ -102,7 +102,7 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 
     queuePromises(events.map(e => UpdateTournament(e.id, pool)))
       .then(() => {
-        consoe.log('updated events');
+        console.log('updated events');
         return CheckMatches(pool);
       })
       .then((matches: Match[]) => {
