@@ -94,7 +94,7 @@ export class MatchesEndpoint {
 
     let update = 'UPDATE matches SET ';
     if (state !== null) {
-      update += 'state=' + state + ' ';
+      update += 'state=\'' + state + '\' ';
     }
     update += 'WHERE id=' + id + ' RETURNING *;';
     return pool.query(update).then(response => {

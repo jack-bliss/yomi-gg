@@ -119,7 +119,6 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
       console.error('couldnt update main table :(');
       console.error(err);
     }).then(() => {
-      console.log('releasing client');
       client.release();
       return;
     }, err => {
