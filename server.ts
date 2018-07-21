@@ -94,6 +94,10 @@ app.get('/admin', (req: RequestExtended, res: Response) => {
 
 });
 
+app.get('/terms', (req, res) => {
+  res.sendfile(join(__dirname, './src/pages/terms.html'));
+});
+
 const TournamentUpdateInterval: Timer = setInterval(() => {
 
   CheckTournaments(pool).then(events => {
