@@ -124,7 +124,7 @@ export class EventsEndpoint {
         matchQuery += 'AND highlight ' + (exact ? '' : '>') + '= ' + highlight + ' ';
       }
       if (state !== null) {
-        matchQuery += 'AND state = ' + state + ' ';
+        matchQuery += 'AND state = \'' + state + '\' ';
       }
       matchQuery += 'ORDER BY %I ' + direction;
       pool.query(escape(matchQuery, order), (err, response) => {
