@@ -110,7 +110,7 @@ export class BetEndpoint {
 
     else if (MatchBet.fields.indexOf(order) === -1) {
       setErrorCode(ErrorCodes.INVALID_MATCH_FIELD, res);
-      throw new Errors.BadRequestError('Invalid profile field');
+      throw new Errors.BadRequestError('Invalid match field');
     }
 
     return new Promise((resolve, reject) => {
@@ -139,10 +139,52 @@ export class BetEndpoint {
 
   }
 
-  @Path('/match/breakdown/:match_id')
+  @Path('/match/:match_id')
   @GET
   @Preprocessor(MemberPreprocessor)
   getBetsOnMatch(
+    @ContextRequest { pool, res }: RequestExtended,
+    @PathParam('match_id') match_id: number,
+    @QueryParam('order') order: (keyof MatchBet) = 'date',
+    @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
+  ): Promise<MatchBetExpanded[]> {
+
+    if (typeof match_id !== 'number') {
+      setErrorCode(ErrorCodes.INVALID_MATCH_ID, res);
+      throw new Errors.BadRequestError('Invalid match id, ' + match_id);
+    }
+
+    if (direction !== 'ASC' && direction !== 'DESC') {
+      setErrorCode(ErrorCodes.INVALID_DIRECTION, res);
+      throw new Errors.BadRequestError('Invalid direction');
+    }
+
+    else if (MatchBet.fields.indexOf(order) === -1) {
+      setErrorCode(ErrorCodes.INVALID_MATCH_FIELD, res);
+      throw new Errors.BadRequestError('Invalid match field');
+    }
+
+    const query = 'SELECT ' +
+      'prediction, wager, outcome, winnings, ' +
+      'entrant1id, entrant2id, entrant1tag, entrant2tag, round, round_order, ' +
+      'name AS tournament, ' +
+      'username AS bettor ' +
+      'FROM match_bets, matches, events, profiles ' +
+      'WHERE match_bets.match_id = matches.id AND ' +
+      'match_bets.profile_id = profiles.id AND ' +
+      'events.id = matches.event_id AND ' +
+      'match_id = ' + match_id + ' ' +
+      'ORDER BY %I ' + direction;
+
+    return pool.query(escape(query, order)).then(response => {
+      return response.rows.map(row => new MatchBetExpanded(row));
+    })
+  }
+
+  @Path('/match/:match_id/breakdown/')
+  @GET
+  @Preprocessor(MemberPreprocessor)
+  getBetBreakdown(
     @ContextRequest { pool, res }: RequestExtended,
     @PathParam('match_id') match_id: number,
   ): Promise<MatchBetBreakdown> {
