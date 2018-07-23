@@ -2,6 +2,8 @@ import { BetOutcome } from '../types/bet-outcome.type';
 
 export class MatchBet {
 
+  static fields: (keyof MatchBet)[] = ['id', 'profile_id', 'match_id', 'prediction', 'wager', 'outcome', 'date'];
+
   id: number;
   profile_id: number;
   match_id: number;

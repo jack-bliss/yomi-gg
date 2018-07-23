@@ -11,8 +11,6 @@ import { ErrorCodes, setErrorCode } from '../errors/error-codes';
 @Path('/profiles?')
 export class ProfilesEndpoint {
 
-  publicFields = PublicProfile.fields;
-
   @GET
   @Preprocessor(AdminPreprocessor)
   getProfiles(
@@ -21,7 +19,7 @@ export class ProfilesEndpoint {
     @ContextRequest { pool, res }: RequestExtended,
   ): Promise<PublicProfile[]> {
 
-    if (!Profile.prototype.hasOwnProperty(order)) {
+    if (PublicProfile.fields.indexOf(order) === -1) {
       setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
       throw new Errors.BadRequestError('invalid profile field');
     }
@@ -33,7 +31,7 @@ export class ProfilesEndpoint {
 
     const query =
       'SELECT ' +
-      this.publicFields.join(', ') + ', ' +
+      PublicProfile.fields.join(', ') + ', ' +
       'count(*) OVER() AS total ' +
       'FROM profiles ORDER BY ' +
       '%I ' + direction;
@@ -70,7 +68,7 @@ export class ProfilesEndpoint {
     @PathParam('field') field: keyof Profile,
     @ContextRequest { pool, session, res }: RequestExtended,
   ): Promise<Profile[keyof Profile]> {
-    if (!Profile.prototype.hasOwnProperty(field)) {
+    if (Profile.fields.indexOf(field) === -1) {
       setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
       throw new Errors.BadRequestError('That is not a valid profile field');
     }

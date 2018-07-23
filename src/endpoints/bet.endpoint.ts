@@ -108,8 +108,8 @@ export class BetEndpoint {
       throw new Errors.BadRequestError('Invalid direction');
     }
 
-    else if (!MatchBet.prototype.hasOwnProperty(order)) {
-      setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
+    else if (MatchBet.fields.indexOf(order) === -1) {
+      setErrorCode(ErrorCodes.INVALID_MATCH_FIELD, res);
       throw new Errors.BadRequestError('Invalid profile field');
     }
 

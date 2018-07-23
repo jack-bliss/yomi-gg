@@ -2,6 +2,8 @@ import { ProfileType } from '../types/profile-type.type';
 
 export class Profile {
 
+  static fields: (keyof Profile)[] = ['id', 'username', 'email', 'joined', 'verified', 'coins', 'type'];
+
   id: number;
   username: string;
   email: string;
