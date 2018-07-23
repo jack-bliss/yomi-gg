@@ -141,7 +141,7 @@ export class BetEndpoint {
 
   @Path('/match/:match_id')
   @GET
-  @Preprocessor(MemberPreprocessor)
+  @Preprocessor(AdminPreprocessor)
   getBetsOnMatch(
     @ContextRequest { pool, res }: RequestExtended,
     @PathParam('match_id') match_id: number,
@@ -183,7 +183,7 @@ export class BetEndpoint {
 
   @Path('/match/:match_id/breakdown/')
   @GET
-  @Preprocessor(MemberPreprocessor)
+  @Preprocessor(AdminPreprocessor)
   getBetBreakdown(
     @ContextRequest { pool, res }: RequestExtended,
     @PathParam('match_id') match_id: number,
