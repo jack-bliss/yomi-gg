@@ -5,13 +5,14 @@ import { Match } from '../models/match.model';
 import * as escape from 'pg-escape';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import { StateValidator } from '../validators/state.validator';
+import { ErrorCodes, setErrorCode } from '../errors/error-codes';
 
 @Path('/events')
 export class EventsEndpoint {
 
   @GET
   getEvents(
-    @ContextRequest { pool }: RequestExtended,
+    @ContextRequest { pool, res }: RequestExtended,
   ): Promise<Event[]> {
 
     return new Promise((resolve, reject) => {
@@ -21,6 +22,7 @@ export class EventsEndpoint {
 
         if (err) {
           console.error(err);
+          setErrorCode(ErrorCodes.UNKNOWN, res);
           reject(new Errors.InternalServerError('Something went wrong fetching the events'));
         } else {
           resolve(response.rows.map(e => new Event(e)));
@@ -36,7 +38,7 @@ export class EventsEndpoint {
   @GET
   getEventById(
     @PathParam('id') id: number,
-    @ContextRequest { pool }: RequestExtended,
+    @ContextRequest { pool, res }: RequestExtended,
   ): Promise<Event> {
 
     if (typeof id !== 'number') {
@@ -50,6 +52,7 @@ export class EventsEndpoint {
 
         if (err) {
           console.error(err);
+          setErrorCode(ErrorCodes.UNKNOWN, res);
           reject(new Errors.InternalServerError('Something went wrong fetching the event'));
         } else if (response.rows.length === 0){
           reject(new Errors.NotFoundError('Couldn\'t find an event with that id'));
@@ -67,15 +70,17 @@ export class EventsEndpoint {
   @PATCH
   @Preprocessor(AdminPreprocessor)
   updateEvent(
-    @ContextRequest { pool }: RequestExtended,
+    @ContextRequest { pool, res }: RequestExtended,
     @PathParam('id') id: number,
     @FormParam('state') state: string,
   ): Promise<Event> {
 
     if (typeof id !== 'number') {
+      setErrorCode(ErrorCodes.INVALID_EVENT_ID, res);
       throw new Errors.BadRequestError('id must be a number');
     }
     if (!StateValidator(state)) {
+      setErrorCode(ErrorCodes.INVALID_STATE, res);
       throw new Errors.BadRequestError('state is invalid');
     }
 
@@ -95,27 +100,32 @@ export class EventsEndpoint {
     @QueryParam('highlight') highlight: number = null,
     @QueryParam('exact') exact: boolean = false,
     @QueryParam('state') state: 'pending' | 'complete' = null,
-    @ContextRequest { pool }: RequestExtended,
+    @ContextRequest { pool, res }: RequestExtended,
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
 
       if (typeof id !== 'number') {
+        setErrorCode(ErrorCodes.INVALID_EVENT_ID, res);
         throw new Errors.BadRequestError('id must be a number');
       }
 
       if (typeof highlight !== 'number' && highlight !== null) {
+        setErrorCode(ErrorCodes.INVALID_HIGHLIGHT, res);
         throw new Errors.BadRequestError('highlight must be a number');
       }
 
       if (typeof exact !== 'boolean') {
+        setErrorCode(ErrorCodes.INVALID_EXACT, res);
         throw new Errors.BadRequestError('exact must be a boolean');
       }
 
       if (direction !== 'ASC' && direction !== 'DESC') {
+        setErrorCode(ErrorCodes.INVALID_DIRECTION, res);
         throw new Errors.BadRequestError('direction is invalid');
       }
 
       if (!StateValidator(state) && state !== null) {
+        setErrorCode(ErrorCodes.INVALID_STATE, res);
         throw new Errors.BadRequestError('invalid state param');
       }
 
@@ -131,8 +141,10 @@ export class EventsEndpoint {
 
         if (err) {
           console.error(err);
+          setErrorCode(ErrorCodes.NO_MATCHES_FOUND, res);
           reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
         } else if (response.rows.length === 0){
+          setErrorCode(ErrorCodes.UNKNOWN, res);
           reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
         } else {
           resolve(response.rows.map(e => new Match(e)));

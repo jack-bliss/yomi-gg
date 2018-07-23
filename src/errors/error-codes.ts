@@ -1,0 +1,29 @@
+import { Response } from 'express';
+
+export enum ErrorCodes {
+  UNKNOWN = 1000,
+
+  INVALID_EMAIL = 2001,
+  INVALID_PASSWORD = 2002,
+  UNKNOWN_EMAIL = 2003,
+  WRONG_PASSWORD = 2004,
+
+  INVALID_MATCH_ID = 3001,
+  INVALID_PREDICTION = 3002,
+  INVALID_WAGER = 3003,
+  INVALID_EVENT_ID = 3004,
+  INVALID_STATE = 3005,
+  INVALID_HIGHLIGHT = 3006,
+  INVALID_EXACT = 3007,
+  INVALID_DIRECTION = 3008,
+  INVALID_PROFILE_FIELD = 3009,
+
+  NO_MATCHES_FOUND = 4001,
+  NOT_ENOUGH_COINS = 4002,
+  ALREADY_BET = 4003,
+  MATCH_STARTED = 4004,
+}
+
+export const setErrorCode = (code: ErrorCodes, res: Response) => {
+  res.set('error_code', String(code));
+};

@@ -4,7 +4,7 @@ import * as session from 'express-session';
 import * as pgSession from 'connect-pg-simple';
 import { Server } from 'typescript-rest';
 
-import { ProfileEndpoint } from './src/endpoints/profile.endpoint';
+import { ProfilesEndpoint } from './src/endpoints/profiles.endpoint';
 import { RequestExtended } from './src/interfaces/request-extended.interface';
 import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 import { join } from 'path';
@@ -50,7 +50,7 @@ app.use((req: RequestExtended, res, next) => {
 
 Server.buildServices(
   app,
-  ProfileEndpoint,
+  ProfilesEndpoint,
   AuthEndpoint,
   SmashggEndpoint,
   BetEndpoint,

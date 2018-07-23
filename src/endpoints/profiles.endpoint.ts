@@ -1,4 +1,4 @@
-import { Path, GET, ContextRequest, QueryParam, Preprocessor, Errors } from 'typescript-rest';
+import { Path, GET, ContextRequest, QueryParam, Preprocessor, Errors, PathParam } from 'typescript-rest';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { PublicProfile } from '../models/public-profile.model';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
@@ -6,9 +6,10 @@ import { MemberPreprocessor } from '../preprocessors/member.preprocessor';
 import { Profile } from '../models/profile.model';
 import * as escape from 'pg-escape';
 import { MatchBetExpanded } from '../models/match-bet-expanded.model';
+import { ErrorCodes, setErrorCode } from '../errors/error-codes';
 
-@Path('/profile')
-export class ProfileEndpoint {
+@Path('/profiles?')
+export class ProfilesEndpoint {
 
   publicFields = PublicProfile.fields;
 
@@ -17,10 +18,16 @@ export class ProfileEndpoint {
   getProfiles(
     @QueryParam('order') order: (keyof PublicProfile) = 'id',
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
-    @ContextRequest { pool }: RequestExtended,
+    @ContextRequest { pool, res }: RequestExtended,
   ): Promise<PublicProfile[]> {
 
+    if (!Profile.prototype.hasOwnProperty(order)) {
+      setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
+      throw new Errors.BadRequestError('invalid profile field');
+    }
+
     if (direction !== 'ASC' && direction !== 'DESC') {
+      setErrorCode(ErrorCodes.INVALID_DIRECTION, res);
       throw new Errors.BadRequestError('direction is invalid');
     }
 
@@ -35,6 +42,7 @@ export class ProfileEndpoint {
       pool.query(escape(query, order), (err, result) => {
         if (err) {
           console.error(err);
+          setErrorCode(ErrorCodes.UNKNOWN, res);
           throw new Error('An error occurred');
         }
         resolve(result.rows.map(p => new PublicProfile(p)));
@@ -52,6 +60,23 @@ export class ProfileEndpoint {
     const query = 'SELECT * FROM profiles WHERE id=' + session.profile.id;
     return pool.query(query).then(response => {
       return new Profile(response.rows[0]);
+    });
+  }
+
+  @Path('/me/:field')
+  @GET
+  @Preprocessor(MemberPreprocessor)
+  getMyProfileField(
+    @PathParam('field') field: keyof Profile,
+    @ContextRequest { pool, session, res }: RequestExtended,
+  ): Promise<Profile[keyof Profile]> {
+    if (!Profile.prototype.hasOwnProperty(field)) {
+      setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
+      throw new Errors.BadRequestError('That is not a valid profile field');
+    }
+    const query = 'SELECT * FROM profiles WHERE id=' + session.profile.id;
+    return pool.query(query).then(response => {
+      return new Profile(response.rows[0])[field];
     });
   }
 
