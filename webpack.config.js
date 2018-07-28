@@ -1,7 +1,12 @@
+var nodeExternals = require('webpack-node-externals');
+
 module.exports = {
-
+  mode: 'development',
   entry: './server.ts',
-
+  // in order to ignore built-in modules like path, fs, etc. 
+  target: 'node', 
+  // in order to ignore all modules in node_modules folder
+  externals: [nodeExternals()], 
   output: {
     filename: 'bundle.js',
     path: __dirname + '/dist'
