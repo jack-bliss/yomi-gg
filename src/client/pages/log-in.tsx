@@ -39,11 +39,11 @@ class LogInForm extends React.Component<{}, LogInFormState> {
         error: 'Passwords are at least 6 characters long.',
       });
     }
-    const params = new URLSearchParams();
-    params.append('email', this.state.email);
-    params.append('password', this.state.password);
+    const formData = new FormData();
+    formData.append('email', this.state.email);
+    formData.append('password', this.state.password);
     axios
-      .post('/auth/log-in', params)
+      .post('/auth/log-in', formData)
       .then((response: AxiosResponse<Profile>) => {
         console.log(response);
       }).catch((e: AxiosError) => {
