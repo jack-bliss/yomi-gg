@@ -23,7 +23,7 @@ export const ImportGroup = (
       'round, ' +
       'round_order, ' +
       'identifier, ' +
-      'group_id'
+      'group_id' +
       ') SELECT * FROM UNNEST (' +
       '$1::text[], ' +
       '$2::int[], ' +
@@ -34,7 +34,7 @@ export const ImportGroup = (
       '$7::text[], ' +
       '$8::int[], ' +
       '$9::text[], ' +
-      '$10::int[]'
+      '$10::int[]' +
       ');';
 
     const realSets: SmashggSet[] = SGSE.sets

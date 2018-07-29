@@ -9,10 +9,8 @@ import { RequestExtended } from './src/interfaces/request-extended.interface';
 import { AuthEndpoint } from './src/endpoints/auth.endpoint';
 import { join } from 'path';
 import { SmashggEndpoint } from './src/endpoints/smashgg.endpoint';
-import { readFile } from 'fs';
 import { Response } from 'express';
 import { BetEndpoint } from './src/endpoints/bet.endpoint';
-import { MemberPreprocessor } from './src/preprocessors/member.preprocessor';
 import { AdminPreprocessor } from './src/preprocessors/admin.preprocessor';
 import { EventsEndpoint } from './src/endpoints/events.endpoint';
 import { MatchesEndpoint } from './src/endpoints/matches.endpoint';
@@ -88,6 +86,7 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 }, 10 * 1000);
 
 app.use(express.static('dist'));
+app.use(express.static(join(__dirname, 'src/staticpages'), { index:false, extensions:['html'] }));
 app.use(express.static('src/staticpages'));
 
 app.get('/admin', (req: RequestExtended, res: Response) => {
