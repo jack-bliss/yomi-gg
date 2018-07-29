@@ -67,9 +67,14 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 
   CheckTournaments(pool).then(events => {
 
-    queuePromiseFactories(events.map(e => {
-      return () => UpdateTournament(e.id, pool);
-    }))
+    let Factories: (() => Promise<any>)[] = [];
+    events.forEach(event => {
+      Factories = [...Factories, ...event.phase_group.split(',').map(id => {
+        return () => UpdateTournament(event.id, parseInt(id), event.slug, pool)
+      })];
+    });
+
+    queuePromiseFactories(Factories)
       .then(() => {
         return CheckMatches(pool);
       })

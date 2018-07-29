@@ -46,9 +46,19 @@ class LogInForm extends React.Component<{}, LogInFormState> {
         password: this.state.password,
       }))
       .then((response: AxiosResponse<Profile>) => {
-        console.log(response);
+        if (response.data.type === 'admin') {
+          window.location.href = '/admin';
+        } else {
+          this.setState({
+            error: 'Currently, logging in on the website is only for admins. Please use the app if you\'d like to place a bet or manage your settings.',
+          });
+        }
       }).catch((e: AxiosError) => {
-        console.error(e.response);
+        const YomiError = parseInt(e.response.headers.error_code);
+        this.setState({
+          error: 'Error: ' + YomiError,
+        })
+        console.error(YomiError);
       });
   }
 

@@ -3,7 +3,7 @@ import { State } from '../types/state.type';
 export class Event {
 
   id: number;
-  phase_group: number;
+  phase_group: string;
   name: string;
   slug: string;
   image: string;

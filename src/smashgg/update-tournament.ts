@@ -4,23 +4,18 @@ import { GetGroupSets, SmashggGroupSetsEntities } from './get-group-sets';
 import { GetTournament, SmashggTournamentEntities } from './get-tournament';
 import { nNestedArrays } from '../utility/nNestedArrays';
 
-export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: number, pool: Pool) => {
+export const UpdateTournament = (
+    event_id: number, 
+    group_id: number,
+    tournament_slug: string,
+    pool: Pool
+  ) => {
+  
   const players: { [key: number]: string } = {};
   let sets: SmashggSet[] = [];
 
-  const eventQuery = 'SELECT phase_group, slug FROM events WHERE id=' + id;
-
-  return pool.query(eventQuery).then(response => {
-
-    const group_id = response.rows[0].phase_group;
-    const tournament = response.rows[0].slug;
-
-    return Promise.all([GetGroupSets(group_id), GetTournament(tournament)]);
-
-  }, err => {
-    console.error('couldnt get event');
-    console.error(err);
-  }).then((response: [SmashggGroupSetsEntities, SmashggTournamentEntities]) => {
+  return Promise.all([GetGroupSets(group_id), GetTournament(tournament_slug)])
+  .then((response: [SmashggGroupSetsEntities, SmashggTournamentEntities]) => {
 
     sets = response[0].sets;
 
@@ -106,7 +101,10 @@ export const UpdateTournament: (id: number, pool: Pool) => Promise<void> = (id: 
         'winner = match_updates.winner, ' +
         'entrant1Score = match_updates.entrant1Score, ' +
         'entrant2Score = match_updates.entrant2Score ' +
-        'FROM match_updates WHERE matches.identifier = match_updates.identifier AND matches.event_id=' + id;
+        'FROM match_updates WHERE ' + 
+        'matches.identifier = match_updates.identifier ' +
+        'AND matches.event_id=' + event_id + ' ' + 
+        'AND matches.group_id=' + group_id;
 
       return client.query(updateQuery);
 
