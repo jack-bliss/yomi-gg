@@ -59,7 +59,7 @@ export const ImportGroup = (
     const setData: (number | string)[][] = orderReady.reduce((acc, set) => {
 
       console.log('==set==');
-      console.log(set.id, set.entrant1Id, set.entrant2Id, event_id);
+      console.log(set.id, set.entrant1Id, set.entrant2Id, event_id, group_id);
       return [
         [...acc[0], set.id,],
         [...acc[1], set.entrant1Id],

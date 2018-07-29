@@ -58,9 +58,26 @@ class ImportTournamentForm extends React.Component<{}, ImportTournamentFormState
 
 }
 
+class ManageTournamentForm extends React.Component<{}, {}> {
+
+}
+
 interface AdminProps {
   match: match<any>,
 }
+
+const AdminTabs = [
+  {
+    tabSlug: 'import',
+    component: ImportTournamentForm,
+    tabName: 'Import'
+  },
+  {
+    tabSlug: 'manage',
+    component: ManageTournamentForm,
+    tabName: 'Manage',
+  }
+]
 
 export const Admin = ({ match }: AdminProps) => {
 
@@ -69,15 +86,21 @@ export const Admin = ({ match }: AdminProps) => {
 
     <div id="actions-list">
       
-      <NavLink to="/admin/import" activeClassName="selected">Import</NavLink>
+      {AdminTabs.map(tab => 
+        <NavLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</NavLink>
+      )}
 
     </div>
 
-    <Switch>
-      
-      <Route path={match.url + '/import'} component={ImportTournamentForm} />
+    <div id="tab-outlet">
+      <Switch>
+        
+        {AdminTabs.map(tab => 
+          <Route path={'/admin/' + tab.tabSlug} component={tab.component} />
+        )}
 
-    </Switch>
+      </Switch>
+    </div>
 
   </div>;
 
