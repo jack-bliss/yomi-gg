@@ -48,7 +48,7 @@ class LogInForm extends React.Component<{}, LogInFormState> {
       .then((response: AxiosResponse<Profile>) => {
         console.log(response);
       }).catch((e: AxiosError) => {
-        console.error(e);
+        console.error(e.response);
       });
   }
 
