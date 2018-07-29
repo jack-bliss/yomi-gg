@@ -75,7 +75,6 @@ export const ImportGroup = (
 
     }, nNestedArrays<number | string>(10));
 
-    console.log(insertSetsQuery);
     return pool.query(insertSetsQuery, setData);
   });
 
