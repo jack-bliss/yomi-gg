@@ -60,6 +60,10 @@ class ImportTournamentForm extends React.Component<{}, ImportTournamentFormState
 
 class ManageTournamentForm extends React.Component<{}, {}> {
 
+  render() {
+    return <div>Manage Goes Here</div>
+  }
+
 }
 
 interface AdminProps {

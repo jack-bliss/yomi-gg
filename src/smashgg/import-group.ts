@@ -35,7 +35,7 @@ export const ImportGroup = (
       '$8::int[], ' +
       '$9::text[], ' +
       '$10::int[]'
-      ')';
+      ');';
 
     const realSets: SmashggSet[] = SGSE.sets
     .filter(set => set.entrant1PrereqType !== 'bye'  && set.entrant2PrereqType !== 'bye');
@@ -75,7 +75,8 @@ export const ImportGroup = (
 
     }, nNestedArrays<number | string>(10));
 
+    console.log(insertSetsQuery);
     return pool.query(insertSetsQuery, setData);
-    });
+  });
 
 }

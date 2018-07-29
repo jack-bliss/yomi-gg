@@ -59,10 +59,6 @@ Server.buildServices(
   PayoutEndpoint,
 );
 
-app.get('/terms', (req, res) => {
-  res.sendfile(join(__dirname, './src/pages/terms.html'));
-});
-
 const TournamentUpdateInterval: Timer = setInterval(() => {
 
   CheckTournaments(pool).then(events => {
@@ -92,6 +88,7 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 }, 10 * 1000);
 
 app.use(express.static('dist'));
+app.use(express.static('src/staticpages'));
 
 app.get('/admin', (req: RequestExtended, res: Response) => {
 
