@@ -97,12 +97,12 @@ app.get('/admin', (req: RequestExtended, res: Response) => {
     return;
   }
 
-  res.sendFile(join(__dirname, './src/react/app.html'));
+  res.sendFile(join(__dirname, './src/client/app.html'));
 
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, './src/react/app.html'));
+  res.sendFile(join(__dirname, './src/client/app.html'));
 });
 
 

@@ -1,5 +1,5 @@
 module.exports = {
-  entry: "./src/react/app.tsx",
+  entry: "./src/client/app.tsx",
   output: {
       filename: "app.js",
       path: __dirname + "/dist"
