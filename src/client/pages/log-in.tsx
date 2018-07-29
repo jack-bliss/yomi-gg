@@ -5,7 +5,7 @@ import { EmailValidator } from '../../validators/email.validator';
 import { PasswordValidator } from '../../validators/password.validator';
 import { Profile } from '../../models/profile.model';
 import axios, { AxiosResponse, AxiosError } from 'axios';
-
+import * as qs from 'qs';
 
 
 interface LogInFormState {
@@ -39,11 +39,12 @@ class LogInForm extends React.Component<{}, LogInFormState> {
         error: 'Passwords are at least 6 characters long.',
       });
     }
-    const formData = new FormData();
-    formData.append('email', this.state.email);
-    formData.append('password', this.state.password);
+    
     axios
-      .post('/auth/log-in', formData)
+      .post('/auth/log-in', qs.stringify({
+        email: this.state.email,
+        password: this.state.password,
+      }))
       .then((response: AxiosResponse<Profile>) => {
         console.log(response);
       }).catch((e: AxiosError) => {
