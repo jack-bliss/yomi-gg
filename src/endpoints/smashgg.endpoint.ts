@@ -37,11 +37,11 @@ export class SmashggEndpoint {
     return GetSet(set_id);
   }
 
-  @Path('/import/')
+  @Path('/import')
   @POST
   importTournament(
     @FormParam('tournament') tournament: string,
-    @FormParam('group_id') group_id: number,
+    @FormParam('group_id') group_id: string,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<Event> {
 
@@ -49,14 +49,14 @@ export class SmashggEndpoint {
 
   }
 
-  @Path('/update-event/')
+  @Path('/update-event')
   @POST
   updateTournament(
     @FormParam('id') id: number,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<void> {
 
-    return UpdateTournament(id, pool);
+    throw new Errors.NotImplementedError('Manual updating is under construction');
 
   }
 

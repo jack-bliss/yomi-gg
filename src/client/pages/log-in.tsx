@@ -1,4 +1,3 @@
-import { FormEvent } from "../../../node_modules/@types/react";
 import * as React from 'react';
 import { Input } from "../components/input";
 import { EmailValidator } from '../../validators/email.validator';
@@ -27,7 +26,7 @@ class LogInForm extends React.Component<{}, LogInFormState> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(event: FormEvent<HTMLFormElement>) {
+  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!EmailValidator(this.state.email)) {
       this.setState({
