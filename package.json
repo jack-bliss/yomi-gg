@@ -36,6 +36,7 @@
     "pg-escape": "^0.2.0",
     "request-promise-native": "^1.0.5",
     "ts-node": "^7.0.0",
-    "typescript-rest": "^1.6.1"
+    "typescript-rest": "^1.6.1",
+    "webpack-node-externals": "^1.7.2"
   }
 }
