@@ -59,41 +59,6 @@ Server.buildServices(
   PayoutEndpoint,
 );
 
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, './src/pages/index.html'));
-});
-
-app.get('/place-a-bet', (req: RequestExtended, res: Response) => {
-
-  try {
-    MemberPreprocessor(req);
-  } catch(e) {
-    res.redirect('/');
-    return;
-  }
-
-  readFile(join(__dirname, './src/pages/bet.html'), 'utf-8', (err, data: string) => {
-    res.send(data.replace(
-      '%%user_info%%',
-      '<h2>' + req.session.profile.username + '</h2><h4>' + req.session.profile.coins + '</h4>'
-    ));
-  });
-
-});
-
-app.get('/admin', (req: RequestExtended, res: Response) => {
-
-  try {
-    AdminPreprocessor(req);
-  } catch(e) {
-    res.redirect('/');
-    return;
-  }
-
-  res.sendFile(join(__dirname, './src/pages/admin.html'));
-
-});
-
 app.get('/terms', (req, res) => {
   res.sendfile(join(__dirname, './src/pages/terms.html'));
 });
@@ -120,6 +85,26 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
   });
 
 }, 10 * 1000);
+
+app.use(express.static('dist'));
+
+app.get('/admin', (req: RequestExtended, res: Response) => {
+
+  try {
+    AdminPreprocessor(req);
+  } catch(e) {
+    res.redirect('/log-in');
+    return;
+  }
+
+  res.sendFile(join(__dirname, './src/react/app.html'));
+
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, './src/react/app.html'));
+});
+
 
 app.listen(port, () => {
   console.log(`Server started on ${port}`);

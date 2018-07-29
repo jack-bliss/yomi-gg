@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ts-node server"
+    "serve": "ts-node --project tsconfig.server.json server",
+    "bundle": "webpack",
+    "start": "npm run bundle && npm run serve"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +20,7 @@
     "@types/node": "^10.3.5",
     "@types/pg": "^7.4.9",
     "@types/pg-escape": "^0.2.0",
+    "@types/react-router": "^4.0.29",
     "@types/request-promise-native": "^1.0.15",
     "awesome-typescript-loader": "^5.2.0",
     "jest": "^23.2.0",
@@ -25,7 +28,8 @@
     "ts-jest": "^22.4.6",
     "ts-lint": "^4.5.1",
     "typescript": "^2.9.2",
-    "webpack": "^4.12.1"
+    "webpack": "^4.12.1",
+    "webpack-cli": "^3.1.0"
   },
   "dependencies": {
     "bcrypt": "^2.0.1",
@@ -34,9 +38,10 @@
     "express-session": "^1.15.6",
     "pg": "^7.4.3",
     "pg-escape": "^0.2.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "request-promise-native": "^1.0.5",
     "ts-node": "^7.0.0",
-    "typescript-rest": "^1.6.1",
-    "webpack-node-externals": "^1.7.2"
+    "typescript-rest": "^1.6.1"
   }
 }
