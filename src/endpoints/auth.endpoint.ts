@@ -80,11 +80,13 @@ export class AuthEndpoint {
     return new Promise((resolve, reject) => {
 
       if (!EmailValidator(email)) {
+        console.log('+++++', email);
         setErrorCode(ErrorCodes.INVALID_EMAIL, res);
         throw new Errors.BadRequestError('That email is invalid.');
       }
 
       if (!PasswordValidator(password)) {
+        console.log('+++++', password);
         setErrorCode(ErrorCodes.INVALID_PASSWORD, res);
         throw new Errors.BadRequestError('That password is invalid.');
       }
