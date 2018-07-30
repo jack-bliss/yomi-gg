@@ -12,6 +12,7 @@ const outlet = document.getElementById('outlet');
 const AppRoot = styled.div`
   color: ${LightColor};
   min-height: 100vh;
+  font-family: Helvetica, Arial, sans-serif;
     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#4ca0f4+0,4cffc9+100 */
   background: ${PrimaryColor}; /* Old browsers */
   background: -moz-linear-gradient(45deg, ${PrimaryColor} 0%, ${SecondaryColor} 100%); /* FF3.6-15 */

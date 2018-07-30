@@ -4,8 +4,8 @@ import { A } from '../components/a';
 
 const IndexRoot = styled.div`
   display: grid;
-  grid-template-columns: auto 500px auto;
-  grid-template-rows: 40px 100px 40px 100px auto;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 100px auto 100px auto auto;
   grid-template-areas: 
     ". . ."
     ". header ."
@@ -26,11 +26,14 @@ const Download = styled.div`
 const Title = styled.h1`
   font-size: 72px;
   font-weight: normal;
+  margin: 0;
+  font-style: italic;
 `;
 
 const SubTitle = styled.h3`
   font-size: 32px;
   font-weight: normal;
+  margin: 0;
 `;
 
 
@@ -39,7 +42,7 @@ export const Index = () => {
   return <IndexRoot id="index">
 
     <Header>
-      <Title>Yomi</Title>
+      <Title>YOMI</Title>
       <SubTitle>Real time, peer to peer esports betting</SubTitle>
     </Header>
 
