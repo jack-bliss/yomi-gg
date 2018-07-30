@@ -6,6 +6,7 @@ import * as qs from 'qs';
 import styled from 'styled-components';
 import { SubTitle } from '../components/sub-title';
 import { LinkStyling } from '../components/a';
+import { ImportTournamentForm } from './admin-tabs/import-tournament-form';
 
 const AdminRoot = styled.div`
   display: grid;
@@ -36,60 +37,6 @@ const TabOutLet = styled.div`
   grid-area: outlet;
 `;
 
-interface ImportTournamentFormState {
-  slug: string;
-  groups: string;
-  state: 'ready' | 'loading' | 'done' | 'error';
-}
-
-class ImportTournamentForm extends React.Component<{}, ImportTournamentFormState> {
-
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      slug: '',
-      groups: '',
-      state: 'ready',
-    }
-    this.doImport = this.doImport.bind(this);
-  }
-
-  doImport(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    this.setState({
-      state: 'loading',
-    })
-    axios
-      .post('/smashgg/import/', qs.stringify({
-        tournament: this.state.slug,
-        group_id: this.state.groups,
-      }))
-      .then((response: AxiosResponse<Event>) => {
-        this.setState({
-          state: 'done',
-        })
-      }, (err: AxiosError) => {
-        console.error(err.response);
-        this.setState({
-          state: 'error',
-        })
-      });
-  }
-
-  render() {
-    return <form onSubmit={this.doImport}>
-      <Input label="Tournament Slug" onChange={slug => this.setState({ slug })} />
-      <Input label="Group IDs" onChange={groups => this.setState({ groups })} />
-      {
-        this.state.state === 'ready' ? 
-          <input type="submit" value="import" /> : 
-          <span>{this.state.state}</span>
-      }
-    </form>;
-  }
-
-}
-
 class ManageTournamentForm extends React.Component<{}, {}> {
 
   render() {
@@ -118,7 +65,7 @@ const AdminTabs = [
 export const Admin = ({ match }: AdminProps) => {
 
   return <AdminRoot id="admin">
-    <AdminTitle>Admin Page</AdminTitle>
+    <AdminTitle>Admin</AdminTitle>
 
     <ActionsList>
       

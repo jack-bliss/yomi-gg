@@ -4,7 +4,8 @@ import { TertiaryColor, PrimaryColor } from '../theme';
 export const LinkStyling = css`
   color: ${TertiaryColor};
   text-decoration: none;
-  padding: 3px;
+  padding: 3px 5px;
+  border-radius: 2px;
   &:hover {
     background-color: ${TertiaryColor};
     color: ${PrimaryColor};
