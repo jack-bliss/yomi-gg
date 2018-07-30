@@ -6,7 +6,6 @@ import { GetSet } from '../smashgg/get-set';
 import { Event } from '../models/event.model';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
-import { UpdateTournament } from '../smashgg/update-tournament';
 import { ImportTournament } from '../smashgg/import-tournament';
 
 @Path('/smashgg')

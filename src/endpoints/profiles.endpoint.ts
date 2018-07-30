@@ -67,14 +67,16 @@ export class ProfilesEndpoint {
   getMyProfileField(
     @PathParam('field') field: keyof Profile,
     @ContextRequest { pool, session, res }: RequestExtended,
-  ): Promise<Profile[keyof Profile]> {
+  ): Promise<Partial<Profile>> {
     if (Profile.fields.indexOf(field) === -1) {
       setErrorCode(ErrorCodes.INVALID_PROFILE_FIELD, res);
       throw new Errors.BadRequestError('That is not a valid profile field');
     }
     const query = 'SELECT * FROM profiles WHERE id=' + session.profile.id;
     return pool.query(query).then(response => {
-      return new Profile(response.rows[0])[field];
+      return {
+        [field]: new Profile(response.rows[0])[field],
+      }
     });
   }
 

@@ -32,10 +32,11 @@ export class BetEndpoint {
       throw new Errors.BadRequestError('prediction must be a number');
     }
 
-    if (typeof wager !== 'number') {
+    if (typeof wager !== 'number' || wager > 5) {
       setErrorCode(ErrorCodes.INVALID_WAGER, res);
-      throw new Errors.BadRequestError('wager must be a number');
+      throw new Errors.BadRequestError('wager must be a number not greater than 5');
     }
+
     let newCoins: number;
 
     const checkMatchQuery = 'SELECT * FROM matches WHERE id=' + match_id;

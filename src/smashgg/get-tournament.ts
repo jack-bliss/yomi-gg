@@ -23,7 +23,7 @@ export const GetTournament = (tournament: string): Promise<SmashggTournamentEnti
 
   return new Promise((resolve, reject) => {
     axios
-      .get('https://api.smash.gg/tournament/' + tournament + '?expand[]=phase&expand[]=groups&expand[]=entrants')
+      .get('https://api.smash.gg/tournament/' + tournament + '?expand[]=phase&expand[]=groups&expand[]=entrants&expand[]=event')
       .then((response: AxiosResponse<SmashggResponse<SmashggTournamentEntities>>) => {
         resolve(response.data.entities);
       }, err => {

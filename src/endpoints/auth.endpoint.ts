@@ -130,7 +130,7 @@ export class AuthEndpoint {
   emailExists(
     @ContextRequest { pool, res }: RequestExtended,
     @QueryParam('email') email: string,
-  ): Promise<boolean> {
+  ): Promise<{ exists: boolean }> {
 
     const query = 'SELECT id FROM profiles WHERE email=%L';
 
@@ -148,7 +148,9 @@ export class AuthEndpoint {
           console.error(err);
           reject(new Errors.InternalServerError('An error occurred'));
         } else {
-          resolve(result.rows.length > 0);
+          resolve({
+            exists: result.rows.length > 0
+          });
         }
       });
     });
@@ -159,7 +161,7 @@ export class AuthEndpoint {
   usernameExists(
     @ContextRequest { pool, res }: RequestExtended,
     @QueryParam('username') username: string,
-  ): Promise<boolean> {
+  ): Promise<{ exists: boolean }> {
     const query = 'SELECT id FROM profiles WHERE username=%L';
     return new Promise((resolve, reject) => {
       pool.query(escape(query, username), (err, result) => {
@@ -168,7 +170,9 @@ export class AuthEndpoint {
           console.error(err);
           reject(new Errors.InternalServerError('An error occurred'));
         } else {
-          resolve(result.rows.length > 0);
+          resolve({
+            exists: result.rows.length > 0
+          });
         }
       });
     });

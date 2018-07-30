@@ -140,11 +140,11 @@ export class EventsEndpoint {
       pool.query(escape(matchQuery, order), (err, response) => {
 
         if (err) {
+          setErrorCode(ErrorCodes.UNKNOWN, res);
           console.error(err);
-          setErrorCode(ErrorCodes.NO_MATCHES_FOUND, res);
           reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
         } else if (response.rows.length === 0){
-          setErrorCode(ErrorCodes.UNKNOWN, res);
+          setErrorCode(ErrorCodes.NO_MATCHES_FOUND, res);
           reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
         } else {
           resolve(response.rows.map(e => new Match(e)));
