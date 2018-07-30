@@ -5,12 +5,19 @@ import { PasswordValidator } from '../../validators/password.validator';
 import { Profile } from '../../models/profile.model';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import * as qs from 'qs';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const StyledInput = styled(Input)`
-  label {
-    min-width: 100px;
-  }
+const LogInRoot = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 100px auto;
+  grid-template-areas: 
+    ". . ."
+    ". form .";
+`;
+
+const LogInFormRoot = styled.form`
+  grid-area: form;
 `;
 
 interface LogInFormState {
@@ -68,21 +75,15 @@ class LogInForm extends React.Component<{}, LogInFormState> {
   }
 
   render() {
-    return <form onSubmit={this.handleSubmit}>
-      <StyledInput label="Email" onChange={(email) => this.setState({ email })} />
-      <StyledInput label="Password" type="password" onChange={(password) => this.setState({ password })} />
+    return <LogInFormRoot onSubmit={this.handleSubmit}>
+      <Input label="Email" onChange={(email) => this.setState({ email })} />
+      <Input label="Password" type="password" onChange={(password) => this.setState({ password })} />
       <input type="submit" value="Log In" />
       {this.state.error ? <div className="error">{this.state.error}</div> : null}
-    </form>;
+    </LogInFormRoot>;
   }
 
 }
-
-const LogInRoot = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: 100px auto;
-`;
 
 export const LogIn = () => {
 

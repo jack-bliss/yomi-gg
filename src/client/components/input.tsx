@@ -1,4 +1,5 @@
 import * as React from 'react';
+import styled from 'styled-components';
 
 interface InputProps {
   label: string;
@@ -11,6 +12,11 @@ interface InputState {
   value: string;
   type: 'text' | 'password';
 }
+
+const InputLabel = styled.span`
+  min-width: 100px;
+  display: inline-block;
+`;
 
 export class Input extends React.Component<InputProps, InputState> {
 
@@ -30,8 +36,8 @@ export class Input extends React.Component<InputProps, InputState> {
   }
 
   render() {
-    return <div className="input-group">
-      <span>{this.props.label}</span>
+    return <div>
+      <InputLabel>{this.props.label}</InputLabel>
       <input 
         type={this.state.type} 
         value={this.state.value} 
@@ -39,5 +45,4 @@ export class Input extends React.Component<InputProps, InputState> {
       />
     </div>;
   }
-
 }
