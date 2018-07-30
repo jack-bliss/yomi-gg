@@ -6,6 +6,7 @@ import { LogIn } from './pages/log-in';
 import { Admin } from './pages/admin';
 import { Index } from './pages/index';
 import { PrimaryColor, LightColor, SecondaryColor } from './theme';
+import { NotFound } from './pages/not-found';
 
 const outlet = document.getElementById('outlet');
 
@@ -26,6 +27,7 @@ const App = () => {
       <Route path="/log-in" component={LogIn} /> 
       <Route path="/admin" component={Admin} />
       <Route path="/" exact={true} component={Index} />
+      <Route component={NotFound} />
     </Switch>
   </AppRoot>;
 }
