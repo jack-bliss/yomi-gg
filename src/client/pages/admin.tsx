@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { Switch, Route, match, NavLink } from 'react-router-dom';
-import { Input } from '../components/input';
-import axios, { AxiosResponse, AxiosError } from 'axios';
-import * as qs from 'qs';
+import { Switch, Route, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { SubTitle } from '../components/sub-title';
 import { LinkStyling } from '../components/a';
@@ -45,10 +42,6 @@ class ManageTournamentForm extends React.Component<{}, {}> {
 
 }
 
-interface AdminProps {
-  match: match<any>,
-}
-
 const AdminTabs = [
   {
     tabSlug: 'import',
@@ -62,7 +55,7 @@ const AdminTabs = [
   }
 ]
 
-export const Admin = ({ match }: AdminProps) => {
+export const Admin = () => {
 
   return <AdminRoot id="admin">
     <AdminTitle>Admin</AdminTitle>

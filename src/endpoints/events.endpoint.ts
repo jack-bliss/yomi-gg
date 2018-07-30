@@ -6,18 +6,28 @@ import * as escape from 'pg-escape';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import { StateValidator } from '../validators/state.validator';
 import { ErrorCodes, setErrorCode } from '../errors/error-codes';
+import { State } from '../types/state.type';
 
 @Path('/events')
 export class EventsEndpoint {
 
   @GET
   getEvents(
+    @QueryParam('state') state: State = null,
     @ContextRequest { pool, res }: RequestExtended,
   ): Promise<Event[]> {
 
+    if (!StateValidator(state) && state !== null) {
+      setErrorCode(ErrorCodes.INVALID_STATE, res);
+      throw new Errors.BadRequestError('invalid state param');
+    }
+
     return new Promise((resolve, reject) => {
 
-      const eventsQuery = 'SELECT * FROM events';
+      let eventsQuery = 'SELECT * FROM events';
+      if (state !== null) {
+        eventsQuery += ' WHERE state=\'' + state + '\'';
+      }
       pool.query(eventsQuery, (err, response) => {
 
         if (err) {
@@ -99,7 +109,7 @@ export class EventsEndpoint {
     @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
     @QueryParam('highlight') highlight: number = null,
     @QueryParam('exact') exact: boolean = false,
-    @QueryParam('state') state: 'pending' | 'complete' = null,
+    @QueryParam('state') state: State = null,
     @ContextRequest { pool, res }: RequestExtended,
   ): Promise<Match[]> {
     return new Promise((resolve, reject) => {
@@ -143,9 +153,6 @@ export class EventsEndpoint {
           setErrorCode(ErrorCodes.UNKNOWN, res);
           console.error(err);
           reject(new Errors.InternalServerError('Something went wrong fetching the matches'));
-        } else if (response.rows.length === 0){
-          setErrorCode(ErrorCodes.NO_MATCHES_FOUND, res);
-          reject(new Errors.NotFoundError('Couldn\'t find any matches with that event id'));
         } else {
           resolve(response.rows.map(e => new Match(e)));
         }
