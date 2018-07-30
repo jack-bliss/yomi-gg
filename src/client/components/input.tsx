@@ -14,7 +14,7 @@ interface InputState {
 }
 
 const InputLabel = styled.span`
-  min-width: 100px;
+  min-width: 150px;
   display: inline-block;
 `;
 

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import styled from 'styled-components';
 import { A } from '../components/a';
+import { Title } from '../components/title';
+import { SubTitle } from '../components/sub-title';
 
 const IndexRoot = styled.div`
   display: grid;
@@ -21,19 +23,6 @@ const Header = styled.div`
 const Download = styled.div`
   grid-area: download;
   text-align: center;
-`;
-
-const Title = styled.h1`
-  font-size: 72px;
-  font-weight: normal;
-  margin: 0;
-  font-style: italic;
-`;
-
-const SubTitle = styled.h3`
-  font-size: 32px;
-  font-weight: normal;
-  margin: 0;
 `;
 
 

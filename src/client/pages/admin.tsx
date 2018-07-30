@@ -3,6 +3,38 @@ import { Switch, Route, match, NavLink } from 'react-router-dom';
 import { Input } from '../components/input';
 import axios, { AxiosResponse, AxiosError } from 'axios';
 import * as qs from 'qs';
+import styled from 'styled-components';
+import { SubTitle } from '../components/sub-title';
+import { LinkStyling } from '../components/a';
+
+const AdminRoot = styled.div`
+  display: grid;
+  grid-template-columns: 20px auto 20px 1fr;
+  grid-template-rows: 50px auto 20px 1fr;
+  grid-template-areas:
+    ". .       . ."
+    ". title   . ."
+    ". .       . ."
+    ". actions . outlet";
+`;
+
+const AdminTitle = SubTitle.extend`
+  grid-area: title;
+`;
+
+const StyledNavLink = styled(NavLink)`
+  display: block;
+  margin-bottom: 20px;
+  ${LinkStyling}
+`;
+
+const ActionsList = styled.div`
+  grid-area: actions;
+`;
+
+const TabOutLet = styled.div`
+  grid-area: outlet;
+`;
 
 interface ImportTournamentFormState {
   slug: string;
@@ -85,27 +117,25 @@ const AdminTabs = [
 
 export const Admin = ({ match }: AdminProps) => {
 
-  return <div id="admin">
-    <h2>Admin Page</h2>
+  return <AdminRoot id="admin">
+    <AdminTitle>Admin Page</AdminTitle>
 
-    <div id="actions-list">
+    <ActionsList>
       
       {AdminTabs.map(tab => 
-        <NavLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</NavLink>
+        <StyledNavLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</StyledNavLink>
       )}
 
-    </div>
+    </ActionsList>
 
-    <div id="tab-outlet">
+    <TabOutLet>
       <Switch>
-        
         {AdminTabs.map(tab => 
           <Route path={'/admin/' + tab.tabSlug} component={tab.component} />
         )}
-
       </Switch>
-    </div>
+    </TabOutLet>
 
-  </div>;
+  </AdminRoot>;
 
 }
