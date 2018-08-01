@@ -103,7 +103,7 @@ interface ManageHeaderProps {
 const ManageHeader = ({ event }: ManageHeaderProps) => {
   return <ManageHeaderWrapper>
     ({event.id}) {event.name} - {event.state} 
-    <UpdateQueueButton onClick={() => updateQueue(event.id)}></UpdateQueueButton>
+    <UpdateQueueButton onClick={() => updateQueue(event.id)}>Update Stream</UpdateQueueButton>
   </ManageHeaderWrapper>;
 }
 

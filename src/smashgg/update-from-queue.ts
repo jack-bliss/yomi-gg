@@ -15,7 +15,7 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
     const createTempTable = 'CREATE TEMP TABLE match_updates (' +
       'set_id INT,' +
       'stream INT,' +
-      'order INT' +
+      'stream_order INT' +
       ');'
 
     return client.query(createTempTable)
@@ -30,7 +30,7 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
     const insterIntoMatchUpdates = 'INSERT INTO match_updates (' +
       'set_id, ' +
       'stream, ' +
-      'order' +
+      'stream_order' +
       ') SELECT * FROM UNNEST (' +
       '$1, ' +
       '$2, ' +
@@ -53,7 +53,7 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
   }).then(r => {
     const updateMatches = 'UPDATE matches SET ' +
       'stream = match_updates.stream, ' +
-      'stream_order = match_updates.order, ' +
+      'stream_order = match_updates.stream_order, ' +
       'highlight = 2 ' +
       'FROM match_updates WHERE ' +
       'matches.set_id = match_updates.set_id;'
