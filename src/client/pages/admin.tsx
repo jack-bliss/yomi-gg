@@ -21,7 +21,7 @@ const AdminTitle = SubTitle.extend`
   grid-area: title;
 `;
 
-const StyledNavLink = styled(NavLink)`
+const AdminTabLink = styled(NavLink)`
   display: block;
   margin-bottom: 20px;
   ${LinkStyling}
@@ -59,7 +59,7 @@ export const Admin = () => {
 
     <ActionsList>
       {AdminTabs.map(tab => 
-        <StyledNavLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</StyledNavLink>
+        <AdminTabLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</AdminTabLink>
       )}
     </ActionsList>
 

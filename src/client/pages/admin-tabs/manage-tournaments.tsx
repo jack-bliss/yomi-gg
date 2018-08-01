@@ -9,19 +9,26 @@ import { Match } from '../../../models/match.model';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
+const EventLink = A.extend`
+  display: block;
+  margin-bottom: 20px;
+`;
+
 interface EventItemProps {
   event: Event;
   onClick: (e: any) => any;
 }
 const EventItem = ({event, onClick}: EventItemProps) => {
-  return <A 
+  return <EventLink
     href="#" 
     data-id={event.id}
     onClick={onClick}
-  >{event.name}</A>
+  >{event.name}</EventLink>
 };
 
-const EventListWrapper = styled.div``;
+const EventListWrapper = styled.div`
+  grid-area: list;
+`;
 
 interface EventListProps {
   events: Event[];
@@ -64,7 +71,28 @@ const InteractiveEventList = connect(
   mapDispatchToEventListProps,
 )(EventList);
 
-const ManageTournamentWrapper = styled.div``;
+const ManageTournamentWrapper = styled.div`
+  display: grid;
+  grid-template-columns: auto 20px 1fr;
+  grid-template-rows: auto 20px auto;
+  grid-template-areas: 
+    "list . header"
+    "list . . "
+    "list . matches";
+`;
+
+const ManageHeaderWrapper = styled.div`
+  grid-area: header;
+`;
+
+interface ManageHeaderProps {
+  event: Event;
+}
+const ManageHeader = ({ event }: ManageHeaderProps) => {
+  return <ManageHeaderWrapper>
+    ({event.id}) {event.name} - {event.state}
+  </ManageHeaderWrapper>;
+}
 
 interface ManageTournamentsLayoutProps {
   focused: Event;
@@ -72,21 +100,18 @@ interface ManageTournamentsLayoutProps {
   hasEvents: boolean;
   fetchEvents: () => void;
 }
-const ManageTournamentsLayout = (
-  { focused, loading, hasEvents, fetchEvents }: ManageTournamentsLayoutProps
-) => {
+const ManageTournamentsLayout = ({ 
+    focused, 
+    loading, 
+    hasEvents, 
+    fetchEvents 
+  }: ManageTournamentsLayoutProps) => {
   if (!hasEvents && !loading) {
     fetchEvents();
   }
-  let focusedElem;
-  if (focused) {
-    focusedElem = <div>({focused.id}) {focused.name} : {focused.state}</div>;
-  } else {
-    focusedElem = null;
-  }
   return <ManageTournamentWrapper>
+    {focused ? <ManageHeader event={focused} /> : null}
     <InteractiveEventList></InteractiveEventList>
-    {focusedElem}
   </ManageTournamentWrapper>;
 }
 
