@@ -15,7 +15,7 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
     client = c;
 
     const createTempTable = 'CREATE TEMP TABLE match_updates (' +
-      'set_id INT,' +
+      'set_id VARCHAR(50),' +
       'stream INT,' +
       'stream_order INT' +
       ');'
