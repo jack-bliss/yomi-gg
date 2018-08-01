@@ -16,29 +16,35 @@ export const EventsReducer = (state: EventsState = EventsInitialState, action: E
   console.log('full data:', action);
   switch (action.type) {
     case EventsActionType.FETCHING_EVENTS:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         fetching: 'events',
-      });
+      };
     case EventsActionType.EVENTS_FETCHED:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         fetching: 'none',
         events: action.events,
-      });
+      };
     case EventsActionType.FETCHING_EVENT_MATCHES:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         fetching: 'matches',
-      });
+      };
     case EventsActionType.EVENT_MATCHES_FETCHED:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         fetching: 'none',
-        event_matches: Object.assign({}, state, {
+        event_matches: {
+          ...state.event_matches,
           [action.event_id]: action.matches,
-        }),
-      });
+        },
+      };
     case EventsActionType.FOCUS_EVENT:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         focused: action.event_id,
-      });
+      };
   }
 
   return state;
