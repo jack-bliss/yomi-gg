@@ -176,12 +176,14 @@ export class EventsEndpoint {
       throw new Errors.BadRequestError('invalid event id');
     }
     let matches: Match[];
-    return pool.query('SELECT * FROM matches WHERE id=' + id + ' AND highlight > 0')
+    return pool.query('SELECT * FROM matches WHERE event_id=' + id + ' AND highlight > 0')
       .then(r => {
         matches = r.rows.map(m => new Match(m));
         const ids = matches.map(m => m.id);
         const list = '(' + ids.join(',') + ')';
-        return pool.query('SELECT * FROM match_bets WHERE match_id in ' + list); 
+        const query = 'SELECT * FROM match_bets WHERE match_id IN ' + list;
+        console.log(query);
+        return pool.query(query); 
       }).then(r => {
         const bets = r.rows.map(b => new MatchBet(b));
         const matchBetSpreads: MatchBetSpread[] = matches.map((match: Match) => {
