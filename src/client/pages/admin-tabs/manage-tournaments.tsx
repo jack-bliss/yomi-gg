@@ -8,6 +8,7 @@ import axios, { AxiosResponse } from 'axios';
 import { Match } from '../../../models/match.model';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
+import * as qs from 'qs';
 
 const EventLink = A.extend`
   display: block;
@@ -85,12 +86,24 @@ const ManageHeaderWrapper = styled.div`
   grid-area: header;
 `;
 
+const UpdateQueueButton = styled.button``;
+
+const updateQueue = (id: number) => {
+  axios
+    .post('/smashgg/update-event-queue', qs.stringify({ id }))
+    .then((r: AxiosResponse) => {
+      console.log(r);
+    }, err => {
+      console.error(err);
+    });
+}
 interface ManageHeaderProps {
   event: Event;
 }
 const ManageHeader = ({ event }: ManageHeaderProps) => {
   return <ManageHeaderWrapper>
-    ({event.id}) {event.name} - {event.state}
+    ({event.id}) {event.name} - {event.state} 
+    <UpdateQueueButton onClick={() => updateQueue(event.id)}></UpdateQueueButton>
   </ManageHeaderWrapper>;
 }
 
