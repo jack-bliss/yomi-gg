@@ -8,6 +8,7 @@ import { SmashggRankingSeries } from '../interfaces/smashgg/smashgg-ranking-seri
 import { SmashggRankingIteration } from '../interfaces/smashgg/smashgg-ranking-iteration.interface';
 import { SmashggResponse } from '../interfaces/smashgg/smashgg-response.interface';
 import axios, { AxiosResponse } from 'axios';
+import { SmashggStream } from '../interfaces/smashgg/smashgg-stream.interface';
 
 export interface SmashggTournamentEntities {
   tournament: SmashggTournament;
@@ -17,13 +18,14 @@ export interface SmashggTournamentEntities {
   players: SmashggPlayer[];
   rankingSeries: SmashggRankingSeries[];
   rankingIterations: SmashggRankingIteration[];
+  stream: SmashggStream[];
 }
 
 export const GetTournament = (tournament: string): Promise<SmashggTournamentEntities> => {
 
   return new Promise((resolve, reject) => {
     axios
-      .get('https://api.smash.gg/tournament/' + tournament + '?expand[]=phase&expand[]=groups&expand[]=entrants&expand[]=event')
+      .get('https://api.smash.gg/tournament/' + tournament + '?expand[]=phase&expand[]=groups&expand[]=entrants&expand[]=event&expand[]=stream')
       .then((response: AxiosResponse<SmashggResponse<SmashggTournamentEntities>>) => {
         resolve(response.data.entities);
       }, err => {

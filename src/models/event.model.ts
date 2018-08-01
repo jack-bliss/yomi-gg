@@ -9,6 +9,7 @@ export class Event {
   image: string;
   starting: string;
   state: State;
+  smashgg_id: number;
 
   constructor(input: any) {
 
@@ -19,6 +20,7 @@ export class Event {
     this.image = input.image;
     this.starting = input.starting;
     this.state = input.state;
+    this.smashgg_id = input.smashgg_id;
 
   }
 

@@ -7,6 +7,7 @@ import { Event } from '../models/event.model';
 import { RequestExtended } from '../interfaces/request-extended.interface';
 import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import { ImportTournament } from '../smashgg/import-tournament';
+import { UpdateFromQueue } from '../smashgg/update-from-queue';
 
 @Path('/smashgg')
 @Preprocessor(AdminPreprocessor)
@@ -48,14 +49,14 @@ export class SmashggEndpoint {
 
   }
 
-  @Path('/update-event')
+  @Path('/update-event-queue')
   @POST
   updateTournament(
     @FormParam('id') id: number,
     @ContextRequest { pool }: RequestExtended,
   ): Promise<void> {
 
-    throw new Errors.NotImplementedError('Manual updating is under construction');
+    return UpdateFromQueue(id, pool);
 
   }
 

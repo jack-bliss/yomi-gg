@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { SubTitle } from '../components/sub-title';
 import { LinkStyling } from '../components/a';
 import { ImportTournamentForm } from './admin-tabs/import-tournament-form';
+import { ManageTournaments } from './admin-tabs/manage-tournaments';
 
 const AdminRoot = styled.div`
   display: grid;
@@ -34,13 +35,7 @@ const TabOutLet = styled.div`
   grid-area: outlet;
 `;
 
-class ManageTournamentForm extends React.Component<{}, {}> {
 
-  render() {
-    return <div>Manage Goes Here</div>
-  }
-
-}
 
 const AdminTabs = [
   {
@@ -50,22 +45,22 @@ const AdminTabs = [
   },
   {
     tabSlug: 'manage',
-    component: ManageTournamentForm,
+    component: ManageTournaments,
     tabName: 'Manage',
   }
 ]
 
 export const Admin = () => {
 
+  
+
   return <AdminRoot id="admin">
     <AdminTitle>Admin</AdminTitle>
 
     <ActionsList>
-      
       {AdminTabs.map(tab => 
         <StyledNavLink to={'/admin/' + tab.tabSlug} activeClassName="active">{tab.tabName}</StyledNavLink>
       )}
-
     </ActionsList>
 
     <TabOutLet>

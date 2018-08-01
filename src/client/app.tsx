@@ -4,9 +4,11 @@ import styled from 'styled-components';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { LogIn } from './pages/log-in';
 import { Admin } from './pages/admin';
-import { Index } from './pages/index';
+import { Index } from './pages';
 import { PrimaryColor, LightColor, SecondaryColor } from './theme';
 import { NotFound } from './pages/not-found';
+import { Provider } from 'react-redux';
+import { store } from './redux/root';
 
 const outlet = document.getElementById('outlet');
 
@@ -22,14 +24,16 @@ const AppRoot = styled.div`
 `;
 
 const App = () => {
-  return <AppRoot>
-    <Switch>
-      <Route path="/log-in" component={LogIn} /> 
-      <Route path="/admin" component={Admin} />
-      <Route path="/" exact={true} component={Index} />
-      <Route component={NotFound} />
-    </Switch>
-  </AppRoot>;
+  return  <Provider store={store}>
+    <AppRoot>
+      <Switch>
+        <Route path="/log-in" component={LogIn} /> 
+        <Route path="/admin" component={Admin} />
+        <Route path="/" exact={true} component={Index} />
+        <Route component={NotFound} />
+      </Switch>
+    </AppRoot>
+  </Provider>;
 }
 
 ReactDOM.render(
