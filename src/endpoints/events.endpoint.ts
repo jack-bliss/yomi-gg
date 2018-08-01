@@ -7,6 +7,8 @@ import { AdminPreprocessor } from '../preprocessors/admin.preprocessor';
 import { StateValidator } from '../validators/state.validator';
 import { ErrorCodes, setErrorCode } from '../errors/error-codes';
 import { State } from '../types/state.type';
+import { MatchBetSpread } from '../models/match-bet-spread.model';
+import { MatchBet } from '../models/match-bet.model';
 
 @Path('/events')
 export class EventsEndpoint {
@@ -160,6 +162,56 @@ export class EventsEndpoint {
       });
 
     });
+  }
+
+  @Path('/:id/matches/breakdown')
+  @GET
+  @Preprocessor(AdminPreprocessor)
+  getEventBreakdown(
+    @PathParam('id') id: number,
+    @ContextRequest { pool, res }: RequestExtended,
+  ): Promise<MatchBetSpread[]> {
+    if (typeof id !== 'number') {
+      setErrorCode(ErrorCodes.INVALID_EVENT_ID, res);
+      throw new Errors.BadRequestError('invalid event id');
+    }
+    let matches: Match[];
+    return pool.query('SELECT * FROM matches WHERE id=' + id + ' AND highlight > 0')
+      .then(r => {
+        matches = r.rows.map(m => new Match(m));
+        const ids = matches.map(m => m.id);
+        const list = '(' + ids.join(',') + ')';
+        return pool.query('SELECT * FROM match_bets WHERE match_id in ' + list); 
+      }).then(r => {
+        const bets = r.rows.map(b => new MatchBet(b));
+        const matchBetSpreads: MatchBetSpread[] = matches.map((match: Match) => {
+          return {
+            round: match.round,
+            state: match.state,
+            entrants: [
+              {
+                score: match.entrant1score,
+                tag: match.entrant1tag,
+                id: match.entrant1id,
+                backing: bets
+                  .filter(b => b.prediction === match.entrant1id)
+                  .reduce((acc, b) => acc + b.wager, 0),
+                is_winner: match.entrant1id === match.winner,
+              },
+              {
+                score: match.entrant2score,
+                tag: match.entrant2tag,
+                id: match.entrant2id,
+                backing: bets
+                  .filter(b => b.prediction === match.entrant2id)
+                  .reduce((acc, b) => acc + b.wager, 0),
+                is_winner: match.entrant2id === match.winner,
+              }
+            ]
+          }
+        });
+        return matchBetSpreads;
+      });
   }
 
 }
