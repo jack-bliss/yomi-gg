@@ -8,6 +8,8 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
 
   let client: PoolClient;
 
+  console.log('updating queue of event', smashgg_id);
+
   return pool.connect().then(c => {
 
     client = c;
@@ -27,19 +29,21 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
       
   }).then((response: AxiosResponse<SmashggStationQueueResponse>) => {
     const streams = response.data.queues;
+    console.log('got streams', streams);
     const insterIntoMatchUpdates = 'INSERT INTO match_updates (' +
       'set_id, ' +
       'stream, ' +
       'stream_order' +
       ') SELECT * FROM UNNEST (' +
-      '$1, ' +
-      '$2, ' +
-      '$3' +
+      '$1::int[], ' +
+      '$2::int[], ' +
+      '$3::int[]' +
       ');';
     let updateData = nNestedArrays(3);
     for (const stream_id in streams) {
       const queue = streams[stream_id];
       const queueLength = queue.length;
+      console.log('breaking out stream', stream_id, queueLength);
       updateData = [
         [...updateData[0], ...queue],
         [...updateData[1], ...nOf(queueLength, stream_id)],
