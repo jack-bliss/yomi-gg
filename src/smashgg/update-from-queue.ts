@@ -58,6 +58,11 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
       'FROM match_updates WHERE ' +
       'matches.set_id = match_updates.set_id;'
     return client.query(updateMatches);
+  }).then(updated => {
+    return client.query('DROP TABLE match_updates');
+  }).then(dropped => {
+    client.release();
+    return 'all done';
   });
 
 }
