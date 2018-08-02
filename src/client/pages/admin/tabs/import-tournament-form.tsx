@@ -1,7 +1,7 @@
 import * as React from 'react';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import * as qs from 'qs';
-import { Input } from '../../components/input';
+import { Input } from '../../../components/input';
 
 interface ImportTournamentFormState {
   slug: string;

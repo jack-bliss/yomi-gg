@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { LogIn } from './pages/log-in';
-import { Admin } from './pages/admin';
+import { Admin } from './pages/admin/admin';
 import { Index } from './pages';
 import { PrimaryColor, LightColor, SecondaryColor } from './theme';
 import { NotFound } from './pages/not-found';

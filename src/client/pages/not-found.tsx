@@ -7,7 +7,7 @@ const NotFoundRoot = styled.div`
   grid-template-columns: 1fr auto 1fr;
   grid-template-rows: 100px auto;
   grid-template-areas: 
-    ". . . "
+    ". .     . "
     ". title .";
 `;
 

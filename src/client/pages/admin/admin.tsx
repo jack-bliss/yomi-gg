@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { Switch, Route, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import { SubTitle } from '../components/sub-title';
-import { LinkStyling } from '../components/a';
-import { ImportTournamentForm } from './admin-tabs/import-tournament-form';
-import { ManageTournaments } from './admin-tabs/manage-tournaments';
+import { SubTitle } from '../../components/sub-title';
+import { LinkStyling } from '../../components/a';
+import { ImportTournamentForm } from './tabs/import-tournament-form';
+import { ManageTournaments } from './tabs/manage-tournaments/manage-tournaments';
 
 const AdminRoot = styled.div`
   display: grid;
