@@ -22,6 +22,7 @@ import { queuePromiseFactories } from './src/utility/queuePromiseFactories';
 import { CheckMatches } from './src/periodics/check-matches.periodic';
 import { Match } from './src/models/match.model';
 import { MatchBetPayout } from './src/payouts/match-bet.payout';
+import { DoQueueUpdates } from './src/periodics/do-queue-updates.periodic';
 
 const app: express.Application = express();
 
@@ -59,29 +60,30 @@ Server.buildServices(
 
 const TournamentUpdateInterval: Timer = setInterval(() => {
 
-  CheckTournaments(pool).then(events => {
+  CheckTournaments(pool)
+    .then(events => {
 
-    let Factories: (() => Promise<any>)[] = [];
-    events.forEach(event => {
-      Factories = [...Factories, ...event.phase_group.split(',').map(id => {
-        return () => UpdateTournament(event.id, parseInt(id), event.slug, pool)
-      })];
-    });
-
-    queuePromiseFactories(Factories)
-      .then(() => {
-        return CheckMatches(pool);
-      })
-      .then((matches: Match[]) => {
-        if (matches.length) {
-          console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
-        }
-        return queuePromiseFactories(matches.map(m =>  {
-          return () => MatchBetPayout(m.id, pool);
-        }));
+      let Factories: (() => Promise<any>)[] = [];
+      events.forEach(event => {
+        Factories = [...Factories, ...event.phase_group.split(',').map(id => {
+          return () => UpdateTournament(event.id, parseInt(id), event.slug, pool)
+        })];
       });
 
+      queuePromiseFactories(Factories)
+        .then(() => {
+          return CheckMatches(pool);
+        }).then((matches: Match[]) => {
+          if (matches.length) {
+            console.log('paying out:', matches.map(m => m.event_id + ':' + m.round).join(', '));
+          }
+          return queuePromiseFactories(matches.map(m =>  {
+            return () => MatchBetPayout(m.id, pool);
+          }));
+        });
   });
+
+  DoQueueUpdates(pool);
 
 }, 10 * 1000);
 
