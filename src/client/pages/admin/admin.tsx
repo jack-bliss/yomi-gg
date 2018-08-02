@@ -5,6 +5,7 @@ import { SubTitle } from '../../components/sub-title';
 import { LinkStyling } from '../../components/a';
 import { ImportTournamentForm } from './tabs/import-tournament-form';
 import { ManageTournaments } from './tabs/manage-tournaments/manage-tournaments';
+import { MemberScores } from './tabs/member-scores/member-scores';
 
 const AdminRoot = styled.div`
   display: grid;
@@ -35,8 +36,6 @@ const TabOutLet = styled.div`
   grid-area: outlet;
 `;
 
-
-
 const AdminTabs = [
   {
     tabSlug: 'import',
@@ -47,6 +46,11 @@ const AdminTabs = [
     tabSlug: 'manage',
     component: ManageTournaments,
     tabName: 'Manage',
+  },
+  {
+    tabSlug: 'scores',
+    component: MemberScores,
+    tabName: 'Scores',
   }
 ]
 

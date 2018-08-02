@@ -101,7 +101,7 @@ export class BetEndpoint {
   getMyMatchBets(
     @ContextRequest { pool, session, res }: RequestExtended,
     @QueryParam('order') order: (keyof MatchBet) = 'date',
-    @QueryParam('direction') direction: 'ASC' | 'DESC' = 'ASC',
+    @QueryParam('direction') direction: 'ASC' | 'DESC' = 'DESC',
   ): Promise<MatchBetExpanded[]> {
 
     if (direction !== 'ASC' && direction !== 'DESC') {
