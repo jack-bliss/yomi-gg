@@ -19,6 +19,12 @@ const MBSRound = styled.span`
 const MBSState = styled.span`
 `;
 
+const MBSBacking = styled.span`
+  padding: 3px;
+  border: 1px solid ${TertiaryColor};
+  border-radius: 10px;
+`;
+
 interface MBSEntrantProps {
   isWinner: boolean;
 }
@@ -35,7 +41,11 @@ export const MatchBetSpreadComp = ({ mbs }: MatchBetSpreadCompProps) => {
       <MBSRound>{mbs.round}</MBSRound> - <MBSState>{mbs.state}</MBSState>
     </div>
     <div>
-      {mbs.entrants.map(e => <MBSEntrant isWinner={e.is_winner}>{e.tag}: {e.backing}</MBSEntrant>)}
+      {mbs.entrants.map(e => {
+        return <MBSEntrant isWinner={e.is_winner}>
+          {e.tag}: <MBSBacking>{e.backing}</MBSBacking>
+        </MBSEntrant>
+      })}
     </div>
   </MBSWrapper>;
 }
