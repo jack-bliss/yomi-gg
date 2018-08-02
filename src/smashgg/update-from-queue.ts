@@ -29,7 +29,6 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
       
   }).then((response: AxiosResponse<SmashggStationQueueResponse>) => {
     const streams = response.data.queues;
-    console.log('got streams', streams);
     const insterIntoMatchUpdates = 'INSERT INTO match_updates (' +
       'set_id, ' +
       'stream, ' +
@@ -43,16 +42,12 @@ export const UpdateFromQueue = (smashgg_id: number, pool: Pool): Promise<any> =>
     for (const stream_id in streams) {
       const queue = streams[stream_id];
       const queueLength = queue.length;
-      console.log('breaking out stream', stream_id, queueLength);
       updateData = [
         [...updateData[0], ...queue],
         [...updateData[1], ...nOf(queueLength, stream_id)],
         [...updateData[2], ...(nOf(queueLength, 0).map((v, i) => i))]
       ];
     }
-    console.log(updateData[0]);
-    console.log(updateData[1]);
-    console.log(updateData[2]);
     return client.query(insterIntoMatchUpdates, updateData);
   }).then(r => {
     const updateMatches = 'UPDATE matches SET ' +
