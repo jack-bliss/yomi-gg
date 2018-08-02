@@ -16,5 +16,6 @@ export interface SmashggSet {
   entrant2PrereqType: string;
   round: number;
   previewOrder: number;
+  state: number;
 
 }

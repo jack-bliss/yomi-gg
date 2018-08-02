@@ -56,17 +56,19 @@ export const UpdateTournament = (
         'entrant2tag, ' +
         'winner, ' +
         'entrant1Score, ' +
-        'entrant2Score' +
+        'entrant2Score, ' +
+        'state' +
         ') SELECT * FROM UNNEST (' +
         '$1::text[], ' + // set id
         '$2::text[], ' + // identifier
-        '$3::int[], ' + // 1id
-        '$4::int[], ' + // 2id
+        '$3::int[], ' + // 1 id
+        '$4::int[], ' + // 2 id
         '$5::text[], ' + // 1tag
         '$6::text[], ' + // 2tag
         '$7::int[], ' + // winner id
         '$8::int[], ' + // 1 score
-        '$9::int[]' + // 2 score
+        '$9::int[], ' + // 2 score
+        '$10::text[]' + // state
         '); ';
 
       const setData: (number | string)[][] = sets.reduce((acc: (number | string)[][], set) => {
@@ -81,9 +83,10 @@ export const UpdateTournament = (
           [...acc[6], set.winnerId],
           [...acc[7], set.entrant1Score],
           [...acc[8], set.entrant2Score],
+          [...acc[9], set.state === 2 ? 'in progress' : 'pending']
         ];
 
-      }, nNestedArrays<number | string>(9));
+      }, nNestedArrays<number | string>(10));
 
       return client.query(updateTempTable, setData);
 
@@ -100,7 +103,8 @@ export const UpdateTournament = (
         'entrant2tag = match_updates.entrant2tag, ' +
         'winner = match_updates.winner, ' +
         'entrant1Score = match_updates.entrant1Score, ' +
-        'entrant2Score = match_updates.entrant2Score ' +
+        'entrant2Score = match_updates.entrant2Score, ' +
+        'state = match_updates.state ' +
         'FROM match_updates WHERE ' + 
         'matches.identifier = match_updates.identifier ' +
         'AND matches.event_id=' + event_id + ' ' + 
