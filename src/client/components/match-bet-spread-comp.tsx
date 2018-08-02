@@ -25,6 +25,8 @@ interface MBSEntrantProps {
 const MBSEntrant = styled.span`
   background-color: ${(props: MBSEntrantProps) => props.isWinner ? TertiaryColor : 'transparent'};
   color: ${(props) => props.isWinner ? PrimaryColor : 'inherit'};
+  display: inline-block;
+  width: 40%;
 `;
 
 export const MatchBetSpreadComp = ({ mbs }: MatchBetSpreadCompProps) => {
