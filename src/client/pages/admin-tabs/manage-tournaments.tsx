@@ -3,13 +3,17 @@ import { A } from '../../components/a';
 import { Event } from '../../../models/event.model';
 import { RootState } from '../../redux/root';
 import { Dispatch } from 'redux';
-import { fetchingEventMatches, eventMatchesFetched, focusEvent, fetchingEvents, eventsFetched } from '../../redux/events/events_actions';
+import { fetchingEventMatches, eventMatchesFetched, focusEvent, fetchingEvents, eventsFetched, fetchingEventBreakdown, eventBreakdownFetched } from '../../redux/events/events_actions';
 import axios, { AxiosResponse } from 'axios';
 import { Match } from '../../../models/match.model';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import * as qs from 'qs';
+import { MatchBetSpread } from '../../../models/match-bet-spread.model';
+import { MatchBetSpreadComp } from '../../components/match-bet-spread-comp';
 
+
+/* ===EVENT LIST=== */
 const EventLink = A.extend`
   display: block;
   margin-bottom: 20px;
@@ -72,6 +76,112 @@ const InteractiveEventList = connect(
   mapDispatchToEventListProps,
 )(EventList);
 
+/* ===HEADER=== */
+
+const ManageHeaderWrapper = styled.div`
+  grid-area: header;
+`;
+
+// buttons
+const HeaderButton = styled.button`
+  margin-left: 10px;
+`;
+
+interface BetFetchButtonProps {
+  id: number;
+}
+
+interface BetFetchButtonPresenterProps {
+  fetch: (id: number) => void;
+  id: number;
+}
+
+const mapStateToBetFetchButtonProps = (state: RootState, ownProps: BetFetchButtonProps): Partial<BetFetchButtonPresenterProps> => {
+  return {
+    id: ownProps.id,
+  }
+}
+
+const mapDispatchToBetFetchButtonProps = (dispatch: Dispatch): Partial<BetFetchButtonPresenterProps> => {
+  return {
+    fetch: (id: number) => {
+      dispatch(fetchingEventBreakdown());
+      axios
+        .get('/events/' + id + '/matches/breakdown')
+        .then((r: AxiosResponse<MatchBetSpread[]>) => {
+          dispatch(eventBreakdownFetched(id, r.data));
+        });
+    }
+  }
+}
+
+const BetFetchButtonPresenter = ({ fetch, id }: BetFetchButtonPresenterProps) => {
+  return <HeaderButton onClick={() => fetch(id)}>List Bets</HeaderButton>
+}
+
+const BetFetchButton = connect(
+  mapStateToBetFetchButtonProps,
+  mapDispatchToBetFetchButtonProps
+)(BetFetchButtonPresenter);
+
+interface UpdateQueueButtonProps {
+  id: number;
+}
+
+const UpdateQueueButton = ({ id }: UpdateQueueButtonProps) => {
+  return <HeaderButton onClick={() => {
+    axios
+      .post('/smashgg/update-event-queue', qs.stringify({ id }))
+      .then((r: AxiosResponse) => {
+        console.log(r);
+      }, err => {
+        console.error(err);
+      });
+  }}>Update Stream</HeaderButton>
+}
+
+// actual component
+interface ManageHeaderProps {
+  event: Event;
+}
+const ManageHeader = ({ event }: ManageHeaderProps) => {
+  return <ManageHeaderWrapper>
+    ({event.id}) {event.name} - {event.state} 
+    <UpdateQueueButton id={event.smashgg_id} />
+    <BetFetchButton id={event.id} />
+  </ManageHeaderWrapper>;
+}
+
+/* ===DISPLAY OUTLET=== */
+
+const DisplayOutlet = styled.div`
+  grid-area: display;
+`;
+
+interface BreakdownListLayoutProps {
+  list: MatchBetSpread[];
+}
+
+const BreakdownListWrapper = styled.div``;
+
+const BreakdownListLayout = ({ list }: BreakdownListLayoutProps) => {
+  return <BreakdownListWrapper>
+    { list.map(mbs => <MatchBetSpreadComp mbs={mbs} />)}
+  </BreakdownListWrapper>
+}
+
+const mapStateToBreakdownListLayoutProps = (state: RootState): Partial<BreakdownListLayoutProps> => {
+  return {
+    list: state.events.event_breakdown[state.events.focused],
+  }
+}
+
+const BreakDownList = connect(
+  mapStateToBreakdownListLayoutProps,
+)(BreakdownListLayout);
+
+/* ===OVERALL LAYOUT=== */
+
 const ManageTournamentWrapper = styled.div`
   display: grid;
   grid-template-columns: auto 20px 1fr;
@@ -79,52 +189,32 @@ const ManageTournamentWrapper = styled.div`
   grid-template-areas: 
     "list . header"
     "list . . "
-    "list . matches";
+    "list . display";
 `;
-
-const ManageHeaderWrapper = styled.div`
-  grid-area: header;
-`;
-
-const UpdateQueueButton = styled.button``;
-
-const updateQueue = (id: number) => {
-  axios
-    .post('/smashgg/update-event-queue', qs.stringify({ id }))
-    .then((r: AxiosResponse) => {
-      console.log(r);
-    }, err => {
-      console.error(err);
-    });
-}
-interface ManageHeaderProps {
-  event: Event;
-}
-const ManageHeader = ({ event }: ManageHeaderProps) => {
-  return <ManageHeaderWrapper>
-    ({event.id}) {event.name} - {event.state} 
-    <UpdateQueueButton onClick={() => updateQueue(event.smashgg_id)}>Update Stream</UpdateQueueButton>
-  </ManageHeaderWrapper>;
-}
 
 interface ManageTournamentsLayoutProps {
   focused: Event;
   loading: boolean;
   hasEvents: boolean;
   fetchEvents: () => void;
+  display: 'matches' | 'breakdown' | 'none';
 }
 const ManageTournamentsLayout = ({ 
     focused, 
     loading, 
     hasEvents, 
-    fetchEvents 
+    fetchEvents,
+    display, 
   }: ManageTournamentsLayoutProps) => {
   if (!hasEvents && !loading) {
     fetchEvents();
   }
   return <ManageTournamentWrapper>
-    {focused ? <ManageHeader event={focused} /> : null}
     <InteractiveEventList></InteractiveEventList>
+    {focused ? <ManageHeader event={focused} /> : null}
+    <DisplayOutlet>
+      { display === 'breakdown' ? <BreakDownList /> : null}
+    </DisplayOutlet>
   </ManageTournamentWrapper>;
 }
 
@@ -135,6 +225,7 @@ const mapStateToManageTournamentsLayoutProps = (state: RootState): Partial<Manag
     hasEvents: events.length > 0,
     loading: state.events.fetching === 'events',
     focused: focused ? events.find(e => e.id === focused) : null,
+    display: state.events.displaying,
   };
 }
 
