@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MatchBetSpread } from '../../models/match-bet-spread.model';
 import styled from 'styled-components';
-import { TertiaryColor, PrimaryColor } from '../theme';
+import { TertiaryColor, PrimaryColor, LightColor } from '../theme';
 
 interface MatchBetSpreadCompProps {
   mbs: MatchBetSpread;
@@ -9,6 +9,8 @@ interface MatchBetSpreadCompProps {
 
 const MBSWrapper = styled.div`
   margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid ${LightColor};
 `;
 
 const MBSRound = styled.span`
@@ -21,8 +23,8 @@ interface MBSEntrantProps {
   isWinner: boolean;
 }
 const MBSEntrant = styled.span`
-  background-color: ${(props: MBSEntrantProps) => props.isWinner ? TertiaryColor : 'none'};
-  color: ${(props) => props.isWinner ? 'inherit' : PrimaryColor};
+  background-color: ${(props: MBSEntrantProps) => props.isWinner ? TertiaryColor : 'transparent'};
+  color: ${(props) => props.isWinner ? PrimaryColor : 'inherit'};
 `;
 
 export const MatchBetSpreadComp = ({ mbs }: MatchBetSpreadCompProps) => {

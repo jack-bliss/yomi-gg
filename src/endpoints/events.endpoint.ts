@@ -176,7 +176,8 @@ export class EventsEndpoint {
       throw new Errors.BadRequestError('invalid event id');
     }
     let matches: Match[];
-    return pool.query('SELECT * FROM matches WHERE event_id=' + id + ' AND highlight > 0')
+    const matchQuery = 'SELECT * FROM matches WHERE event_id=' + id + ' AND highlight > 0 ORDER BY stream_order ASC';
+    return pool.query(matchQuery)
       .then(r => {
         matches = r.rows.map(m => new Match(m));
         const ids = matches.map(m => m.id);
