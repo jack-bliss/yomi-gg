@@ -92,6 +92,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
     if (totalBacking === 0) {
 
       throw new Error('Match is un-backed!');
+      
     }
 
     profileUpdates.push(nOf(profileUpdates[0].length, totalBacking));

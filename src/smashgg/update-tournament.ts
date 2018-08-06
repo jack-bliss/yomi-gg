@@ -72,9 +72,8 @@ export const UpdateTournament = (
         '); ';
 
       const setData: (number | string)[][] = sets.reduce((acc: (number | string)[][], set) => {
-
         return [
-          [...acc[0], set.id,],
+          [...acc[0], set.id],
           [...acc[1], set.identifier],
           [...acc[2], set.entrant1Id],
           [...acc[3], set.entrant2Id],
@@ -108,7 +107,8 @@ export const UpdateTournament = (
         'FROM match_updates WHERE ' + 
         'matches.identifier = match_updates.identifier ' +
         'AND matches.event_id=' + event_id + ' ' + 
-        'AND matches.group_id=' + group_id;
+        'AND matches.group_id=' + group_id + ' ' +
+        'AND matches.state!=\'complete\'';
 
       return client.query(updateQuery);
 
