@@ -4,6 +4,7 @@ import { MatchBetSpread } from '../../../../../models/match-bet-spread.model';
 import styled from 'styled-components';
 import { MatchBetSpreadComp } from '../../../../components/match-bet-spread-comp';
 import { RootState } from '../../../../redux/root';
+import { EventsState } from '../../../../redux/events/events_state.interface';
 
 interface BreakdownListLayoutProps {
   list: MatchBetSpread[];
@@ -18,8 +19,13 @@ const BreakdownListLayout = ({ list }: BreakdownListLayoutProps) => {
 }
 
 const mapStateToBreakdownListLayoutProps = (state: RootState): Partial<BreakdownListLayoutProps> => {
+  let list: MatchBetSpread[] = [];
+  let es: EventsState = state.events;
+  if (es.event_breakdown.hasOwnProperty(es.focused)) {
+    list = state.events.event_breakdown[state.events.focused];
+  }
   return {
-    list: state.events.event_breakdown[state.events.focused],
+    list,
   }
 }
 

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { BetFetchButton } from './bet-fetch-button';
 import { Event } from '../../../../../models/event.model';
 import { UpdateQueueButton } from './update-queue-button';
+import { MarkInProgressButton } from './mark-in-progress-button';
 
 const ManageHeaderWrapper = styled.div`
   grid-area: header;
@@ -17,5 +18,6 @@ export const ManageHeader = ({ event }: ManageHeaderProps) => {
     ({event.id}) {event.name} - {event.state} 
     <UpdateQueueButton id={event.smashgg_id} />
     <BetFetchButton id={event.id} />
+    <MarkInProgressButton id={event.id} />
   </ManageHeaderWrapper>;
 }

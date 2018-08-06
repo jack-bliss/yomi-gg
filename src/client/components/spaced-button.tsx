@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const HeaderButton = styled.button`
+export const SpacedButton = styled.button`
   margin-left: 10px;
 `;
 

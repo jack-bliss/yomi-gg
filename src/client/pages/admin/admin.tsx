@@ -5,7 +5,6 @@ import { SubTitle } from '../../components/sub-title';
 import { LinkStyling } from '../../components/a';
 import { ImportTournamentForm } from './tabs/import-tournament-form';
 import { ManageTournaments } from './tabs/manage-tournaments/manage-tournaments';
-import { MemberScores } from './tabs/member-scores/member-scores';
 
 const AdminRoot = styled.div`
   display: grid;
@@ -49,7 +48,7 @@ const AdminTabs = [
   },
   {
     tabSlug: 'scores',
-    component: MemberScores,
+    component: () => <div></div>,
     tabName: 'Scores',
   }
 ]

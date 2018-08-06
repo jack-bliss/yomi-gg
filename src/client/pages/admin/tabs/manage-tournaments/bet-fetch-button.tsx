@@ -4,7 +4,7 @@ import { Dispatch } from 'redux';
 import { fetchingEventBreakdown, eventBreakdownFetched } from '../../../../redux/events/events_actions';
 import axios, { AxiosResponse } from 'axios';
 import { MatchBetSpread } from '../../../../../models/match-bet-spread.model';
-import { HeaderButton } from './header-button';
+import { SpacedButton } from '../../../../components/spaced-button';
 import { connect } from 'react-redux';
 
 interface BetFetchButtonProps {
@@ -36,7 +36,7 @@ const mapDispatchToBetFetchButtonProps = (dispatch: Dispatch): Partial<BetFetchB
 }
 
 const BetFetchButtonPresenter = ({ fetch, id }: BetFetchButtonPresenterProps) => {
-  return <HeaderButton onClick={() => fetch(id)}>List Bets</HeaderButton>
+  return <SpacedButton onClick={() => fetch(id)}>List Bets</SpacedButton>
 }
 
 export const BetFetchButton = connect(

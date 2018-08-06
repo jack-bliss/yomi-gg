@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { EventList } from './event-list';
 import { ManageHeader } from './manage-header';
-import { DisplayOutlet } from './display-outlet';
+import { DisplayOutlet } from '../../../../components/display-outlet';
 import { BreakDownList } from './breakdown-list';
 
 const ManageTournamentWrapper = styled.div`

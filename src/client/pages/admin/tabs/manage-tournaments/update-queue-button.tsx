@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HeaderButton } from './header-button';
+import { SpacedButton } from '../../../../components/spaced-button';
 import axios, { AxiosResponse } from 'axios';
 import * as qs from 'qs';
 
@@ -8,7 +8,7 @@ interface UpdateQueueButtonProps {
 }
 
 export const UpdateQueueButton = ({ id }: UpdateQueueButtonProps) => {
-  return <HeaderButton onClick={() => {
+  return <SpacedButton onClick={() => {
     axios
       .post('/smashgg/update-event-queue', qs.stringify({ id }))
       .then((r: AxiosResponse) => {
@@ -16,5 +16,5 @@ export const UpdateQueueButton = ({ id }: UpdateQueueButtonProps) => {
       }, err => {
         console.error(err);
       });
-  }}>Update Stream</HeaderButton>
+  }}>Update Stream</SpacedButton>
 }

@@ -2,6 +2,7 @@ import * as React from 'react';
 import { MatchBetSpread } from '../../models/match-bet-spread.model';
 import styled from 'styled-components';
 import { TertiaryColor, PrimaryColor, LightColor } from '../theme';
+import { Coin } from './coin';
 
 interface MatchBetSpreadCompProps {
   mbs: MatchBetSpread;
@@ -17,12 +18,6 @@ const MBSRound = styled.span`
 `;
 
 const MBSState = styled.span`
-`;
-
-const MBSBacking = styled.span`
-  padding: 3px;
-  border: 1px solid ${TertiaryColor};
-  border-radius: 10px;
 `;
 
 interface MBSEntrantProps {
@@ -43,7 +38,7 @@ export const MatchBetSpreadComp = ({ mbs }: MatchBetSpreadCompProps) => {
     <div>
       {mbs.entrants.map(e => {
         return <MBSEntrant isWinner={e.is_winner}>
-          {e.tag}: <MBSBacking>{e.backing}</MBSBacking>
+          {e.tag}: <Coin>{e.backing}</Coin>
         </MBSEntrant>
       })}
     </div>
