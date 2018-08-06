@@ -12,6 +12,8 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
   let totalPayout = 0;
   let totalBacking = 0;
 
+  let noBacking = false;
+
   let matchBetUpdates = nNestedArrays<number | string>(2);
 
   return pool.connect().then((c: PoolClient) => {
@@ -91,7 +93,7 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
     if (totalBacking === 0) {
 
-      throw new Error('Match is un-backed!');
+      noBacking = true;
       
     }
 
@@ -139,9 +141,13 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then(() => {
 
-    const coinFunction =
+    let coinFunction =
       '(profiles.coins + profile_updates.coins + ' +
       '(profile_updates.total_payout * (profile_updates.coins / profile_updates.total_backing))) ';
+
+    if (noBacking) {
+      coinFunction = '(profiles.coins + profile_updates.coins) ';
+    }
 
     const updateQuery = 'UPDATE profiles SET ' +
       'coins = ' +
@@ -195,9 +201,14 @@ export const MatchBetPayout: (id: number, pool: Pool) => Promise<any> = (id: num
 
   }).then(() => {
 
+    let coinFunction = 'bet_updates.total_payout * (match_bets.wager / bet_updates.total_backing) ';
+    if (noBacking) {
+      coinFunction = '0';
+    }
+
     const updateMatchBetsQuery = 'UPDATE match_bets SET ' +
       'outcome = bet_updates.outcome, ' +
-      'winnings = bet_updates.total_payout * (match_bets.wager / bet_updates.total_backing) ' +
+      'winnings = ' + coinFunction +
       'FROM bet_updates WHERE match_bets.id = bet_updates.id';
 
     return client.query(updateMatchBetsQuery);
