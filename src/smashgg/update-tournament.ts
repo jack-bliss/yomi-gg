@@ -82,7 +82,7 @@ export const UpdateTournament = (
           [...acc[6], set.winnerId],
           [...acc[7], set.entrant1Score],
           [...acc[8], set.entrant2Score],
-          [...acc[9], set.state === 2 ? 'in progress' : 'pending']
+          [...acc[9], set.state === 2 ? 'in progress' : 'pending'],
         ];
 
       }, nNestedArrays<number | string>(10));

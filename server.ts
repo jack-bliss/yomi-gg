@@ -89,6 +89,7 @@ const TournamentUpdateInterval: Timer = setInterval(() => {
 
 app.use(express.static('dist'));
 app.use(express.static(join(__dirname, 'src/staticpages'), { index:false, extensions:['html'] }));
+app.use(express.static(join(__dirname, 'src/images'), { index:false, extensions:['png', 'jpg', 'jpeg', 'gif'] }));
 app.use(express.static('src/staticpages'));
 
 app.get('/admin', (req: RequestExtended, res: Response) => {
