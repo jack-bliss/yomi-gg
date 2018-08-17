@@ -1,16 +1,13 @@
 import { Pool } from 'pg';
 import { SmashggTournament } from '../interfaces/smashgg/smashgg-tournament.interface';
 import { GetTournament } from './get-tournament';
-import { GetGroupSets } from './get-group-sets';
-import { SmashggSet } from '../interfaces/smashgg/smashgg-set.interface';
 import { Event } from '../models/event.model';
-import { nNestedArrays } from '../utility/nNestedArrays';
 import { ImportGroup } from './import-group';
 import { queuePromiseFactories } from '../utility/queuePromiseFactories';
 
 export const ImportTournament = (tournament: string, group_id: string, pool: Pool) => {
 
-  let eventName: string, eventId: number, image: string, starting: Date;
+  let eventName: string, eventId: number, image: string, starting: Date, smashgg_id: number;
   const players: { [key: number]: string } = {};
 
   return GetTournament(tournament).then(STE => {
@@ -18,22 +15,24 @@ export const ImportTournament = (tournament: string, group_id: string, pool: Poo
     const T: SmashggTournament = STE.tournament;
     eventName = T.name;
     image = T.images[0].url;
+    smashgg_id = T.id;
     starting = new Date(T.startAt * 1000);
     STE.entrants.forEach(e => {
       players[e.id] = e.name;
     });
 
-    const eventQuery = 'INSERT INTO events (phase_group, name, slug, image, starting) VALUES (' +
+    const eventQuery = 'INSERT INTO events (phase_group, name, slug, image, starting, smashgg_id) VALUES (' +
       '$1::text, ' +
       '$2::text, ' +
       '$3::text, ' +
       '$4::text, ' +
-      '$5' +
+      '$5, ' +
+      '$6::int' +
       ') RETURNING id';
 
     return pool.query(
       eventQuery,
-      [group_id, eventName, tournament, image, starting],
+      [group_id, eventName, tournament, image, starting, smashgg_id],
     )
 
 
